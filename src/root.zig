@@ -7,3 +7,4 @@ pub const vao = @import("vao.zig");
 pub const vbo = @import("vbo.zig");
 pub const ebo = @import("ebo.zig");
 pub const shader = @import("shader.zig");
+pub const texture = @import("texture.zig");

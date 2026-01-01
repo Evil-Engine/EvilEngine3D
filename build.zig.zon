@@ -28,7 +28,7 @@
 
     // Tracks the earliest Zig version that the package considers to be a
     // supported use case.
-    .minimum_zig_version = "0.14.1",
+    .minimum_zig_version = "0.15.1",
 
     // This field is optional.
     // Each dependency must either provide a `url` and `hash`, or a `path`.
@@ -44,9 +44,9 @@
             .url = "git+https://github.com/zig-gamedev/zglfw.git#15bf6ec59a4e1399d0c753455f69b28f09e41791",
             .hash = "zglfw-0.10.0-dev-zgVDNHO2IQDy_fSdwY5U4z42rHUuKgt7T9f-qmQ3FnuL",
         },
-        .zstbi = .{
-            .url = "git+https://github.com/zig-gamedev/zstbi#664305dd52640be15cbebd7cd73d1199679933e1",
-            .hash = "zstbi-0.11.0-dev-L0Ea_2yVBwA4uh-tHfgdhZcQaWRoZVYlNGs4Dl_WTeuR",
+        .ZigSTBI = .{
+            .url = "git+https://github.com/CoolPuppyKid/ZigSTBI.git#e3caa26cbd8910cb6a16d8ffa628af26d703e583",
+            .hash = "ZigSTBI-0.0.1-XrkkIWVqDAAc1w2yxiLdUdaUj46VXqUjMlJ83sGYpqkn",
         },
     },
     .paths = .{

@@ -9,6 +9,7 @@ pub fn build(b: *std.Build) void {
         .root_source_file = b.path("src/root.zig"),
         .target = target,
         .optimize = optimize,
+        .link_libc = true,
     });
 
     const exe_mod = b.createModule(.{
@@ -24,7 +25,6 @@ pub fn build(b: *std.Build) void {
         .name = "EE3D",
         .root_module = lib_mod,
     });
-
     // Dependencies
 
     const zglfw = b.dependency("zglfw", .{});
@@ -37,10 +37,15 @@ pub fn build(b: *std.Build) void {
     const zopengl = b.dependency("zopengl", .{});
     lib.root_module.addImport("zopengl", zopengl.module("root"));
 
-    const zstbi = b.dependency("zstbi", .{});
-    lib.root_module.addImport("zstbi", zstbi.module("root"));
+    const zigstbi = b.dependency("ZigSTBI", .{});
+    lib.root_module.addImport("zigstbi", zigstbi.module("zigstbi"));
 
-    b.installArtifact(lib);
+    const cglm_build = @import("vendor/cglm/build.zig");
+    const cglm_lib = cglm_build.createLib(b, target, optimize);
+
+    b.installDirectory(.{ .source_dir = b.path("vendor/cglm/include/"), .install_dir = .header, .install_subdir = "" });
+
+    lib.linkLibrary(cglm_lib);
 
     const exe = b.addExecutable(.{
         .name = "EE3D_Example",
