@@ -45,8 +45,16 @@
             .hash = "zglfw-0.10.0-dev-zgVDNHO2IQDy_fSdwY5U4z42rHUuKgt7T9f-qmQ3FnuL",
         },
         .ZigSTBI = .{
-            .url = "git+https://github.com/CoolPuppyKid/ZigSTBI.git#e3caa26cbd8910cb6a16d8ffa628af26d703e583",
-            .hash = "ZigSTBI-0.0.1-XrkkIWVqDAAc1w2yxiLdUdaUj46VXqUjMlJ83sGYpqkn",
+            .url = "git+https://github.com/CoolPuppyKid/ZigSTBI.git#ff7ea6362ec0baa7b3bad2e31ceabd5e34dc200a",
+            .hash = "ZigSTBI-0.0.1-XrkkIblzDAAV3n46hNn935AGvtskoJRyxzVTJzNNeZ4W",
+        },
+        .ZigAssimp = .{
+            .url = "git+https://github.com/CoolPuppyKid/ZigAssimp.git#ede25292f513aafa31db8abc644ffd58b6e3f90d",
+            .hash = "ZigAssimp-0.0.0-1H1OBdpiAAAA3lvlkjfu6_J5mQ3Au6LXkgxz3v4I9Zb_",
+        },
+        .zgui = .{
+            .url = "git+https://github.com/zig-gamedev/zgui.git#4293fd37503ad9c680193b42990bd6b5ec4876cf",
+            .hash = "zgui-0.6.0-dev--L6sZHr3bQCeckUeL9YPiARJirsOyjQUZlrg7JxbPzbp",
         },
     },
     .paths = .{

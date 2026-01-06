@@ -61,9 +61,9 @@ fn checkForCompileErrors(shader: gl.Uint, shaderType: ShaderType) !void {
             try logging.Error("EE3D Shader compile error for type: {d},\n\nInfo:\n{s}\n", .{ @intFromEnum(shaderType), log });
         }
     } else {
-        gl.getShaderiv(shader, gl.LINK_STATUS, &successfulCompile);
+        gl.getProgramiv(shader, gl.LINK_STATUS, &successfulCompile);
         if (successfulCompile == gl.FALSE) {
-            gl.getShaderInfoLog(shader, 1024, null, &log);
+            gl.getProgramInfoLog(shader, 1024, null, &log);
             try logging.Error("EE3D Shader link error for type: {d},\n\nInfo:\n{s}\n", .{ @intFromEnum(shaderType), log });
         }
     }

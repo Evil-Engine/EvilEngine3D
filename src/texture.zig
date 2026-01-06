@@ -26,7 +26,7 @@ pub const Texture = struct {
         gl.texParameteri(texType, gl.TEXTURE_WRAP_S, gl.REPEAT);
         gl.texParameteri(texType, gl.TEXTURE_WRAP_T, gl.REPEAT);
 
-        gl.texImage2D(texType, 0, gl.RGBA, @intCast(stbImage.width), @intCast(stbImage.height), 0, format, pixelType, @ptrCast(stbImage.bytes.ptr));
+        gl.texImage2D(texType, 0, gl.RGBA, @intCast(stbImage.width), @intCast(stbImage.height), 0, format, pixelType, stbImage.bytes.ptr);
 
         gl.generateMipmap(texType);
 

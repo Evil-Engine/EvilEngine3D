@@ -1,6 +1,7 @@
 const std = @import("std");
+const x86 = @import("std").Target.x86;
 
-pub fn build(b: *std.Build) void {
+pub fn build(b: *std.Build) !void {
     const target = b.standardTargetOptions(.{});
 
     const optimize = b.standardOptimizeOption(.{});
@@ -40,12 +41,27 @@ pub fn build(b: *std.Build) void {
     const zigstbi = b.dependency("ZigSTBI", .{});
     lib.root_module.addImport("zigstbi", zigstbi.module("zigstbi"));
 
+    const zgui = b.dependency("zgui", .{
+        .shared = false,
+        .with_implot = false,
+        .backend = .glfw_opengl3,
+        .target = target,
+    });
+    lib.root_module.addImport("zgui", zgui.module("root"));
+
+    const assimp = b.dependency("ZigAssimp", .{ .formats = "FBX,Obj,B3D,Blend,glTF,glTF2" });
+
     const cglm_build = @import("vendor/cglm/build.zig");
     const cglm_lib = cglm_build.createLib(b, target, optimize);
 
-    b.installDirectory(.{ .source_dir = b.path("vendor/cglm/include/"), .install_dir = .header, .install_subdir = "" });
-
     lib.linkLibrary(cglm_lib);
+    lib.linkLibrary(assimp.artifact("assimp"));
+    lib.linkLibrary(zgui.artifact("imgui"));
+
+    lib_mod.addIncludePath(b.path("vendor/cglm/include/"));
+    lib_mod.addIncludePath(b.path("vendor/assimp/include/"));
+
+    lib_mod.addIncludePath(assimp.path("include"));
 
     const exe = b.addExecutable(.{
         .name = "EE3D_Example",

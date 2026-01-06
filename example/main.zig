@@ -1,6 +1,8 @@
 const EE3D = @import("EE3D");
 const gl = EE3D.zopengl.bindings;
 const std = @import("std");
+const camera = EE3D.camera;
+const cglm = EE3D.cglm;
 
 pub fn main() !void {
     var app = try EE3D.application.Application.init();
@@ -13,22 +15,48 @@ pub fn main() !void {
     // zig fmt: off
 
     // Vertices coordinates
-    const vertices: [20]f32 = [_]f32{
-        -0.5, -0.5, 0.0, 0.0, 0.0,
-        -0.5,  0.5, 0.0, 0.0, 1.0,
-         0.5,  0.5, 0.0, 1.0, 1.0,
-         0.5, -0.5, 0.0, 1.0, 0.0 
+    const vertices = [_]EE3D.vertex{
+        EE3D.vertex{
+            .position = [_]f32{-0.5, -0.5, 0.0},
+            .UV =  [_]f32{0.0, 0.0},
+        },
+        EE3D.vertex{
+            .position = [_]f32{-0.5, 0.5, 0.0},
+            .UV =  [_]f32{0.0, 1.0},
+        },
+        EE3D.vertex{
+            .position = [_]f32{0.5, 0.5, 0.0},
+            .UV =  [_]f32{1.0, 1.0},
+        },
+        EE3D.vertex{
+            .position = [_]f32{0.5, -0.5, 0.0},
+            .UV =  [_]f32{1.0, 0.0},
+        },
     };
 
 
     // Indices for vertices order
-    var indices = [_]gl.Uint{
+    const indices = [_]gl.Uint{
         0, 2, 1,
         0, 3, 2,
     };
     // zig fmt: on
 
-    const Allocator = app.allocator;
+    const Allocator = EE3D.application.allocator;
+    var vertexList = try std.ArrayList(EE3D.vertex).initCapacity(Allocator, vertices.len + 1);
+    defer vertexList.deinit(Allocator);
+
+    var indicesList = try std.ArrayList(gl.Uint).initCapacity(Allocator, indices.len + 1);
+    defer indicesList.deinit(Allocator);
+
+    for (vertices) |v| {
+        try vertexList.append(Allocator, v);
+    }
+
+    for (indices) |i| {
+        try indicesList.append(Allocator, i);
+    }
+
     const path = try std.fs.selfExeDirPathAlloc(Allocator);
     defer Allocator.free(path);
 
@@ -40,34 +68,41 @@ pub fn main() !void {
     var Shader = try EE3D.shader.Shader.init(Allocator, "default.vert", "default.frag");
 
     var Texture = try EE3D.texture.Texture.init(Allocator, texturePath, gl.TEXTURE_2D, gl.TEXTURE0, gl.RGBA, gl.UNSIGNED_BYTE);
-    try Texture.texUnit(&Shader, "tex0", 0);
+    var TextureList = try std.ArrayList(EE3D.texture.Texture).initCapacity(Allocator, 2);
+    defer TextureList.deinit(Allocator);
 
-    var VAO = EE3D.vao.VAO.init();
-    VAO.bind();
-    var VBO = EE3D.vbo.VBO.init(&vertices, @sizeOf([20]f32));
-    var EBO = EE3D.ebo.EBO.init(indices[0..], @sizeOf([6]c_uint));
+    try TextureList.append(Allocator, Texture);
 
-    VAO.linkVBO(&VBO, 0);
+    //var rotation: f32 = 0.0;
+    //var prevTime = app.getTime();
 
-    VAO.linkAttrib(&VBO, 0, 3, gl.FLOAT, 5 * @sizeOf(f32), null);
-    VAO.linkAttrib(&VBO, 1, 2, gl.FLOAT, 5 * @sizeOf(f32), @ptrFromInt(3 * @sizeOf(f32)));
+    const windowSize = window.getSize();
 
-    VAO.unBind();
-    VBO.unBind();
-    EBO.unBind();
+    var Camera = camera.Camera.init(windowSize.width, windowSize.height, [_]f32{ 0.0, 0.0, 2.0 });
+
+    var TestModel = try EE3D.model.Model.init(Allocator, TextureList, "SP-8952.fbx");
+    defer TestModel.deinit();
+
+    gl.enable(gl.DEPTH_TEST);
 
     while (!window.shouldClose()) {
         window.startRender();
         Shader.activate();
-        Texture.bind();
-        VAO.bind();
-        gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_INT, null);
+
+        //const currentTime = app.getTime();
+        //if (currentTime - prevTime >= 1 / 60) {
+        //    rotation += 0.5;
+        //    prevTime = currentTime;
+        //}
+
+        try Camera.inputs(&window);
+
+        Camera.updateMatrix(75.0, 0.1, 100.0);
+
+        try TestModel.draw(&Shader, &Camera);
+
         window.endRender();
     }
-
-    VAO.destroy();
-    VBO.destroy();
-    EBO.destroy();
     Texture.destroy();
     Shader.destroy();
 }

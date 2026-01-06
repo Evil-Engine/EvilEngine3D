@@ -1,13 +1,14 @@
 const glfw = @import("zglfw");
 const zopengl = @import("zopengl");
+const std = @import("std");
 const gl = zopengl.bindings;
 
 pub const EBO = struct {
-    pub fn init(indices: []gl.Uint, size: gl.Sizeiptr) EBO {
+    pub fn init(indices: std.ArrayList(gl.Uint)) EBO {
         var id: gl.Uint = 0;
         gl.genBuffers(1, &id);
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, id);
-        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, size, indices.ptr, gl.STATIC_DRAW);
+        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, @intCast(indices.items.len * @sizeOf(gl.Uint)), indices.items.ptr, gl.STATIC_DRAW);
 
         return EBO{ .id = id };
     }
