@@ -5,6 +5,8 @@ const camera = EE3D.camera;
 const cglm = EE3D.cglm;
 const UI = EE3D.ui.UI;
 const AssetBrowser = @import("assetbrowser.zig").AssetBrowser;
+const Viewport = @import("viewport.zig").Viewport;
+const ViewportCamera = @import("viewportcamera.zig").ViewportCamera;
 
 pub fn main() !void {
     var app = try EE3D.application.Application.init();
@@ -43,10 +45,10 @@ pub fn main() !void {
     var TestModel = try EE3D.model.Model.init(Allocator, TextureList, "SP-8952.fbx");
     defer TestModel.deinit();
 
-    const windowSize = window.getSize();
-
-    var viewportBuffer: EE3D.FrameBuffer.FrameBuffer = EE3D.FrameBuffer.FrameBuffer.init(@intCast(windowSize.width), @intCast(windowSize.height));
-    defer viewportBuffer.deinit();
+    var viewport = Viewport.init(&window);
+    defer viewport.deinit();
+    var viewportCamera = ViewportCamera.init(&Camera, &window, viewport);
+    defer viewport.deinit();
 
     var assetBrowser = try AssetBrowser.init(Allocator);
     defer assetBrowser.deinit();
@@ -54,8 +56,7 @@ pub fn main() !void {
     gl.enable(gl.DEPTH_TEST);
 
     while (!window.shouldClose()) {
-        window.startRender();
-        viewportBuffer.bind();
+        viewport.startRender();
         window.update(false);
         window.startRender();
         Shader.activate();
@@ -69,28 +70,15 @@ pub fn main() !void {
         //    prevTime = currentTime;
         //}
 
-        try Camera.inputs(&window);
-
         Camera.updateMatrix(75.0, 0.1, 100.0);
 
+        try viewportCamera.input(1);
         try TestModel.draw(&Shader, &Camera);
-        viewportBuffer.unBind();
 
         ui.startRender();
+        viewport.endRender();
 
-        if (EE3D.zgui.begin("Viewport", .{ .flags = .{ ._padding = 0 } })) {
-            const width = EE3D.zgui.getContentRegionAvail()[0];
-            const height = EE3D.zgui.getContentRegionAvail()[1];
-
-            gl.viewport(0, 0, @intFromFloat(width), @intFromFloat(height));
-
-            const tex_id: EE3D.zgui.TextureIdent = @enumFromInt(@as(u64, @intCast(viewportBuffer.texture)));
-            gl.activeTexture(gl.TEXTURE0);
-            gl.bindTexture(gl.TEXTURE_2D, viewportBuffer.texture);
-            viewportBuffer.resizeFrameBuffer(@intFromFloat(width), @intFromFloat(height));
-            EE3D.zgui.image(.{ .tex_data = null, .tex_id = tex_id }, .{ .w = width, .h = height, .uv0 = [_]f32{ 0, 1 }, .uv1 = [_]f32{ 1, 0 } });
-        }
-        EE3D.zgui.end();
+        viewport.renderUI();
         if (EE3D.zgui.begin("Hierarchy", .{})) {
             if (EE3D.zgui.button("Test", .{})) {
                 std.debug.print("Test\n", .{});

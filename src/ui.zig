@@ -44,7 +44,7 @@ pub const UI = struct {
 
         style.colors[@as(usize, @intFromEnum(zgui.StyleCol.tab))] = rgba1(110, 115, 141, 255);
         style.colors[@as(usize, @intFromEnum(zgui.StyleCol.tab_hovered))] = rgba1(54, 58, 79, 255);
-        style.colors[@as(usize, @intFromEnum(zgui.StyleCol.tab_selected))] = rgba1(91, 96, 120, 255);
+        style.colors[@as(usize, @intFromEnum(zgui.StyleCol.tab_selected))] = rgba1(91 + 4, 96 + 4, 120 + 4, 255);
         style.colors[@as(usize, @intFromEnum(zgui.StyleCol.tab_selected_overline))] = rgba1(91, 96, 120, 255);
         style.colors[@as(usize, @intFromEnum(zgui.StyleCol.tab_dimmed))] = rgba1(110, 115, 141, 255);
         style.colors[@as(usize, @intFromEnum(zgui.StyleCol.tab_dimmed_selected))] = rgba1(73, 77, 100, 255);
