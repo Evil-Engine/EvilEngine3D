@@ -6,7 +6,7 @@ const std = @import("std");
 const zigstbi = @import("zigstbi");
 
 pub const Texture = struct {
-    pub fn init(allocator: std.mem.Allocator, image: []const u8, texType: gl.Enum, slot: gl.Enum, format: gl.Enum, pixelType: gl.Enum) !Texture {
+    pub fn init(allocator: std.mem.Allocator, image: []const u8, texType: gl.Enum, slot: ?gl.Enum, format: gl.Enum, pixelType: gl.Enum) !Texture {
         var id: gl.Uint = 0;
 
         zigstbi.set_flip_vertically_on_load(true);
@@ -17,7 +17,7 @@ pub const Texture = struct {
         defer stbImage.deinit();
 
         gl.genTextures(1, &id);
-        gl.activeTexture(slot);
+        if (slot != null) gl.activeTexture(slot.?);
         gl.bindTexture(texType, id);
 
         gl.texParameteri(texType, gl.TEXTURE_MIN_FILTER, gl.NEAREST_MIPMAP_LINEAR);

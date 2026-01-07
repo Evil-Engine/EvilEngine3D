@@ -3,7 +3,6 @@ const zopengl = @import("zopengl");
 const application = @import("application.zig");
 const logging = @import("utils/logging.zig");
 const gl = zopengl.bindings;
-const zgui = @import("zgui");
 
 pub const Window = struct {
     pub fn init(width: i32, height: i32, title: [:0]const u8) !Window {
@@ -20,30 +19,37 @@ pub const Window = struct {
 
         glfw.swapInterval(1);
 
-        try logging.Info("ZGui Backend initialized\n", .{});
-        zgui.init(application.allocator);
-        zgui.backend.init(window);
-
-        return Window{ .rawWindow = window };
+        return Window{ .rawWindow = window, .width = width, .height = height };
     }
 
     pub fn startRender(self: *Window) void {
+        _ = self;
         gl.clearColor(0.07, 0.13, 0.17, 1.0);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-        const fb_size = self.rawWindow.getFramebufferSize();
-        zgui.backend.newFrame(@intCast(fb_size[0]), @intCast(fb_size[1]));
+    }
+
+    /// This just exists to make the engine more readable
+    pub fn clear(self: *Window) void {
+        self.startRender();
+    }
+
+    pub fn update(self: *Window, updateViewport: bool) void {
+        const currentSize = self.rawWindow.getSize();
+
+        if (currentSize[0] != self.width or currentSize[1] != self.height) {
+            self.width = currentSize[0];
+            self.height = currentSize[1];
+            if (updateViewport) gl.viewport(0, 0, self.width, self.height);
+        }
     }
 
     pub fn endRender(self: *Window) void {
-        zgui.backend.draw();
         self.rawWindow.swapBuffers();
         glfw.pollEvents();
     }
 
     pub fn destroy(self: *Window) void {
         glfw.destroyWindow(self.rawWindow);
-        zgui.backend.deinit();
-        zgui.deinit();
     }
 
     pub fn shouldClose(self: *Window) bool {
@@ -51,13 +57,11 @@ pub const Window = struct {
     }
 
     pub fn getSize(self: *Window) WindowSize {
-        var width: c_int = 0;
-        var height: c_int = 0;
-
-        glfw.getWindowSize(self.rawWindow, &width, &height);
-        return WindowSize{ .height = @intCast(height), .width = @intCast(width) };
+        return WindowSize{ .height = @intCast(self.height), .width = @intCast(self.width) };
     }
 
+    width: c_int,
+    height: c_int,
     rawWindow: *glfw.Window,
 };
 

@@ -7,9 +7,9 @@ const cglm = @import("Bindings/c.zig").c;
 pub const glfw = @import("zglfw");
 
 pub const Camera = struct {
-    pub fn init(width: i64, height: i64, position: cglm.vec3) Camera {
+    pub fn init(window: *Window.Window, position: cglm.vec3) Camera {
         const camMatrix: cglm.mat4 = undefined;
-        return Camera{ .speed = 0.1, .orientation = [_]f32{ 0.0, 0.0, -1.0 }, .camMatrix = camMatrix, .firstClick = true, .up = [_]f32{ 0.0, 1.0, 0.0 }, .sensitivity = 100.0, .width = width, .height = height, .position = position };
+        return Camera{ .speed = 0.1, .orientation = [_]f32{ 0.0, 0.0, -1.0 }, .camMatrix = camMatrix, .firstClick = true, .window = window, .up = [_]f32{ 0.0, 1.0, 0.0 }, .sensitivity = 100.0, .position = position };
     }
 
     pub fn updateMatrix(self: *Camera, fovDeg: f32, nearPlane: f32, farPlane: f32) void {
@@ -24,7 +24,7 @@ pub const Camera = struct {
         cglm.glm_vec3_add(&self.position[0], &self.orientation[0], &center);
 
         cglm.glmc_lookat(&self.position[0], &center[0], &self.up[0], &view);
-        cglm.glmc_perspective(cglm.glm_rad(fovDeg), @as(f32, @floatFromInt(@divFloor(self.width, self.height))), nearPlane, farPlane, &projection[0]);
+        cglm.glmc_perspective(cglm.glm_rad(fovDeg), @as(f32, @floatFromInt(@divFloor(self.window.width, self.window.height))), nearPlane, farPlane, &projection[0]);
 
         cglm.glmc_mat4_mul(&projection[0], &view[0], &self.camMatrix[0]);
     }
@@ -77,7 +77,7 @@ pub const Camera = struct {
             try glfw.setInputMode(window.rawWindow, glfw.InputMode.cursor, glfw.Cursor.Mode.hidden);
 
             if (self.firstClick) {
-                glfw.setCursorPos(window.rawWindow, @floatFromInt(@divFloor(self.width, 2)), @floatFromInt(@divFloor(self.height, 2)));
+                glfw.setCursorPos(window.rawWindow, @floatFromInt(@divFloor(self.window.width, 2)), @floatFromInt(@divFloor(self.window.height, 2)));
                 self.firstClick = false;
             }
 
@@ -85,8 +85,8 @@ pub const Camera = struct {
             var mouseY: f64 = 0.0;
             glfw.getCursorPos(window.rawWindow, &mouseX, &mouseY);
 
-            const centerX = @as(f64, @floatFromInt(self.width)) / 2.0;
-            const centerY = @as(f64, @floatFromInt(self.height)) / 2.0;
+            const centerX = @as(f64, @floatFromInt(self.window.width)) / 2.0;
+            const centerY = @as(f64, @floatFromInt(self.window.height)) / 2.0;
 
             const deltaX = mouseX - centerX;
             const deltaY = centerY - mouseY;
@@ -123,8 +123,8 @@ pub const Camera = struct {
 
             glfw.setCursorPos(
                 window.rawWindow,
-                @floatFromInt(@divFloor(self.width, 2)),
-                @floatFromInt(@divFloor(self.height, 2)),
+                @floatFromInt(@divFloor(self.window.width, 2)),
+                @floatFromInt(@divFloor(self.window.height, 2)),
             );
         } else if (glfw.getMouseButton(window.rawWindow, glfw.MouseButton.left) == glfw.Action.release) {
             try glfw.setInputMode(window.rawWindow, glfw.InputMode.cursor, glfw.Cursor.Mode.normal);
@@ -132,8 +132,7 @@ pub const Camera = struct {
         }
     }
 
-    width: i64,
-    height: i64,
+    window: *Window.Window,
     speed: f32,
     sensitivity: f32,
     position: cglm.vec3,

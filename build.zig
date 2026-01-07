@@ -14,7 +14,7 @@ pub fn build(b: *std.Build) !void {
     });
 
     const exe_mod = b.createModule(.{
-        .root_source_file = b.path("example/main.zig"),
+        .root_source_file = b.path("editor/main.zig"),
         .target = target,
         .optimize = optimize,
     });
@@ -59,12 +59,11 @@ pub fn build(b: *std.Build) !void {
     lib.linkLibrary(zgui.artifact("imgui"));
 
     lib_mod.addIncludePath(b.path("vendor/cglm/include/"));
-    lib_mod.addIncludePath(b.path("vendor/assimp/include/"));
 
     lib_mod.addIncludePath(assimp.path("include"));
 
     const exe = b.addExecutable(.{
-        .name = "EE3D_Example",
+        .name = "EE3D_Editor",
         .root_module = exe_mod,
     });
 
