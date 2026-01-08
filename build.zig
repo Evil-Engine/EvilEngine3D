@@ -41,6 +41,9 @@ pub fn build(b: *std.Build) !void {
     const zigstbi = b.dependency("ZigSTBI", .{});
     lib.root_module.addImport("zigstbi", zigstbi.module("zigstbi"));
 
+    const nfd = b.dependency("NFD", .{});
+    lib.root_module.addImport("nfd", nfd.module("nfd"));
+
     const zgui = b.dependency("zgui", .{
         .shared = false,
         .with_implot = false,

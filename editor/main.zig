@@ -7,6 +7,7 @@ const UI = EE3D.ui.UI;
 const AssetBrowser = @import("assetbrowser.zig").AssetBrowser;
 const Viewport = @import("viewport.zig").Viewport;
 const ViewportCamera = @import("viewportcamera.zig").ViewportCamera;
+const ProjectManager = @import("projectmanager.zig").ProjectManager;
 
 pub fn main() !void {
     var app = try EE3D.application.Application.init();
@@ -45,20 +46,24 @@ pub fn main() !void {
     var TestModel = try EE3D.model.Model.init(Allocator, TextureList, "SP-8952.fbx");
     defer TestModel.deinit();
 
-    var viewport = Viewport.init(&window);
+    var assetBrowser = try AssetBrowser.init(Allocator);
+    defer assetBrowser.deinit();
+
+    var projectManager = ProjectManager.init();
+
+    var viewport = Viewport.init(&window, &projectManager);
     defer viewport.deinit();
     var viewportCamera = ViewportCamera.init(&Camera, &window, viewport);
     defer viewport.deinit();
 
-    var assetBrowser = try AssetBrowser.init(Allocator);
-    defer assetBrowser.deinit();
-
     gl.enable(gl.DEPTH_TEST);
 
     while (!window.shouldClose()) {
+        const style = EE3D.zgui.getStyle();
+        window.clear(style.getColor(.window_bg));
         viewport.startRender();
         window.update(false);
-        window.startRender();
+        window.startRender(null);
         Shader.activate();
 
         const drawBufs = [_]gl.Enum{gl.COLOR_ATTACHMENT0};
@@ -70,15 +75,24 @@ pub fn main() !void {
         //    prevTime = currentTime;
         //}
 
-        Camera.updateMatrix(75.0, 0.1, 100.0);
+        Camera.updateMatrix(viewport.viewportSize[0], viewport.viewportSize[1], 75.0, 0.1, 100.0);
 
         try viewportCamera.input(1);
         try TestModel.draw(&Shader, &Camera);
 
         ui.startRender();
+
+        if (EE3D.zgui.beginMainMenuBar()) {
+            if (EE3D.zgui.beginMenu("Edit", true)) {
+                if (EE3D.zgui.menuItem("Settings", .{})) {}
+                EE3D.zgui.endMenu();
+            }
+            EE3D.zgui.endMainMenuBar();
+        }
+
         viewport.endRender();
 
-        viewport.renderUI();
+        try viewport.renderUI();
         if (EE3D.zgui.begin("Hierarchy", .{})) {
             if (EE3D.zgui.button("Test", .{})) {
                 std.debug.print("Test\n", .{});

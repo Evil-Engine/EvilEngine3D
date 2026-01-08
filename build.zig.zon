@@ -56,6 +56,10 @@
             .url = "git+https://github.com/zig-gamedev/zgui.git#4293fd37503ad9c680193b42990bd6b5ec4876cf",
             .hash = "zgui-0.6.0-dev--L6sZHr3bQCeckUeL9YPiARJirsOyjQUZlrg7JxbPzbp",
         },
+        .NFD = .{
+            .url = "git+https://github.com/CoolPuppyKid/nfd-zig.git?ref=main#802143be8c29fc35ffda80a13c1ad1b21eb56656",
+            .hash = "NFD-0.0.0-erBH3-GJBgA2FF9iwLK3ZdQCqyjVxCgTMdAT_Ffsi5fY",
+        },
     },
     .paths = .{
         "build.zig",

@@ -8,6 +8,8 @@ const zgui = @import("zgui");
 const std = @import("std");
 const testing = std.testing;
 
+pub var bigFont: zgui.Font = undefined;
+
 pub const UI = struct {
     pub fn init(Window: window.Window) UI {
         zgui.init(application.allocator);
@@ -33,33 +35,41 @@ pub const UI = struct {
         _ = self;
         const style = zgui.getStyle();
         _ = zgui.io.addFontFromFile("M_PLUS_Rounded_1c/MPLUSRounded1c-ExtraBold.ttf", 18);
+        bigFont = zgui.io.addFontFromFile("M_PLUS_Rounded_1c/MPLUSRounded1c-ExtraBold.ttf", 48);
         style.colors[@as(usize, @intFromEnum(zgui.StyleCol.text))] = rgba1(202, 211, 245, 255);
         style.colors[@as(usize, @intFromEnum(zgui.StyleCol.window_bg))] = rgba1(36, 39, 58, 255);
         style.colors[@as(usize, @intFromEnum(zgui.StyleCol.border))] = rgba1(36 + 2, 39 + 2, 58 + 2, 255);
 
+        style.colors[@as(usize, @intFromEnum(zgui.StyleCol.menu_bar_bg))] = rgba1(54, 58, 79, 255);
+
         style.colors[@as(usize, @intFromEnum(zgui.StyleCol.child_bg))] = rgba1(24 + 4, 25 + 4, 38 + 4, 255);
 
         style.colors[@as(usize, @intFromEnum(zgui.StyleCol.title_bg))] = rgba1(54, 58, 79, 255);
-        style.colors[@as(usize, @intFromEnum(zgui.StyleCol.title_bg_active))] = rgba1(50, 54, 74, 255);
+        style.colors[@as(usize, @intFromEnum(zgui.StyleCol.title_bg_active))] = rgba1(50 + 30, 54 + 30, 74 + 30, 255);
 
         style.colors[@as(usize, @intFromEnum(zgui.StyleCol.tab))] = rgba1(110, 115, 141, 255);
         style.colors[@as(usize, @intFromEnum(zgui.StyleCol.tab_hovered))] = rgba1(54, 58, 79, 255);
-        style.colors[@as(usize, @intFromEnum(zgui.StyleCol.tab_selected))] = rgba1(91 + 4, 96 + 4, 120 + 4, 255);
-        style.colors[@as(usize, @intFromEnum(zgui.StyleCol.tab_selected_overline))] = rgba1(91, 96, 120, 255);
+        style.colors[@as(usize, @intFromEnum(zgui.StyleCol.tab_selected))] = rgba1(91 + 10, 96 + 10, 120 + 10, 255);
+        style.colors[@as(usize, @intFromEnum(zgui.StyleCol.tab_selected_overline))] = rgba1(91 + 10, 96 + 10, 120 + 10, 255);
         style.colors[@as(usize, @intFromEnum(zgui.StyleCol.tab_dimmed))] = rgba1(110, 115, 141, 255);
-        style.colors[@as(usize, @intFromEnum(zgui.StyleCol.tab_dimmed_selected))] = rgba1(73, 77, 100, 255);
-        style.colors[@as(usize, @intFromEnum(zgui.StyleCol.tab_dimmed_selected_overline))] = rgba1(73, 77, 100, 255);
+        style.colors[@as(usize, @intFromEnum(zgui.StyleCol.tab_dimmed_selected))] = rgba1(91 + 10, 96 + 10, 120 + 10, 255);
+        style.colors[@as(usize, @intFromEnum(zgui.StyleCol.tab_dimmed_selected_overline))] = rgba1(91 + 10, 96 + 10, 120 + 10, 255);
 
         style.colors[@as(usize, @intFromEnum(zgui.StyleCol.resize_grip))] = rgba1(240, 198, 198, 255);
         style.colors[@as(usize, @intFromEnum(zgui.StyleCol.resize_grip_hovered))] = rgba1(240, 198, 198, 255);
         style.colors[@as(usize, @intFromEnum(zgui.StyleCol.resize_grip_active))] = rgba1(240 + 10, 198 + 10, 198 + 10, 255);
+
+        style.colors[@as(usize, @intFromEnum(zgui.StyleCol.docking_preview))] = rgba1(240, 198, 198, 255);
 
         style.colors[@as(usize, @intFromEnum(zgui.StyleCol.button))] = rgba1(128, 135, 162, 255);
         style.colors[@as(usize, @intFromEnum(zgui.StyleCol.button_hovered))] = rgba1(110, 115, 141, 255);
         style.colors[@as(usize, @intFromEnum(zgui.StyleCol.button_active))] = rgba1(91, 96, 120, 255);
 
         style.colors[@as(usize, @intFromEnum(zgui.StyleCol.popup_bg))] = rgba1(73, 77, 100, 255);
+
         style.colors[@as(usize, @intFromEnum(zgui.StyleCol.header_hovered))] = rgba1(110, 115, 141, 255);
+
+        style.colors[@as(usize, @intFromEnum(zgui.StyleCol.modal_window_dim_bg))] = rgba1(73, 77, 77, 120);
 
         style.window_rounding = 8;
         style.window_padding = [2]f32{ 8.0, 8.0 };

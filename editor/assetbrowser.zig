@@ -11,17 +11,22 @@ pub const AssetBrowser = struct {
         const path = try std.fs.selfExeDirPathAlloc(allocator);
         defer allocator.free(path);
 
+        const scriptTexturePath = try std.mem.concat(allocator, u8, &[_][]const u8{ path, "\\Script-Icon.png" });
         const folderTexturePath = try std.mem.concat(allocator, u8, &[_][]const u8{ path, "\\Folder-Icon.png" });
         const meshTexturePath = try std.mem.concat(allocator, u8, &[_][]const u8{ path, "\\Mesh-Icon.png" });
         defer {
+            allocator.free(scriptTexturePath);
+            allocator.free(folderTexturePath);
             allocator.free(meshTexturePath);
         }
 
         const folderIcon = try Texture.init(allocator, folderTexturePath, gl.TEXTURE_2D, null, gl.RGBA, gl.UNSIGNED_BYTE);
         const meshIcon = try Texture.init(allocator, meshTexturePath, gl.TEXTURE_2D, null, gl.RGBA, gl.UNSIGNED_BYTE);
+        const scriptIcon = try Texture.init(allocator, scriptTexturePath, gl.TEXTURE_2D, null, gl.RGBA, gl.UNSIGNED_BYTE);
         var icons = std.AutoHashMap(AssetType, Texture).init(allocator);
         try icons.put(.Folder, folderIcon);
         try icons.put(.Mesh, meshIcon);
+        try icons.put(.Script, scriptIcon);
 
         return AssetBrowser{ .allocator = allocator, .icons = icons };
     }
@@ -46,7 +51,7 @@ pub const AssetBrowser = struct {
                 while (i < 255) : (i += 1) {
                     _ = EE3D.zgui.tableNextColumn();
                     EE3D.zgui.beginGroup();
-                    const icon = if (i == 0) self.icons.get(.Mesh).? else self.icons.get(.Folder).?;
+                    const icon = if (i == 0) self.icons.get(.Mesh).? else if (i == 1) self.icons.get(.Script).? else self.icons.get(.Folder).?;
                     const tex_id: EE3D.zgui.TextureIdent = @enumFromInt(@as(u64, @intCast(icon.id)));
                     const folderId = try std.fmt.allocPrint(self.allocator, "Folder{d}", .{i});
                     const folderIdC = try self.allocator.dupeZ(u8, folderId);

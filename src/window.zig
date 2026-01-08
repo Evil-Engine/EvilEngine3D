@@ -22,15 +22,19 @@ pub const Window = struct {
         return Window{ .rawWindow = window, .width = width, .height = height };
     }
 
-    pub fn startRender(self: *Window) void {
+    pub fn startRender(self: *Window, color: ?[4]f32) void {
         _ = self;
-        gl.clearColor(0.07, 0.13, 0.17, 1.0);
+        if (color == null) {
+            gl.clearColor(255, 255, 255, 255);
+        } else {
+            gl.clearColor(color.?[0], color.?[1], color.?[2], color.?[3]);
+        }
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     }
 
     /// This just exists to make the engine more readable
-    pub fn clear(self: *Window) void {
-        self.startRender();
+    pub fn clear(self: *Window, color: ?[4]f32) void {
+        self.startRender(color);
     }
 
     pub fn update(self: *Window, updateViewport: bool) void {

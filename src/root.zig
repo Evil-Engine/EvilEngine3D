@@ -16,3 +16,4 @@ pub const ui = @import("ui.zig");
 pub const vertex = @import("vertex.zig").Vertex;
 pub const zgui = @import("zgui");
 pub const FrameBuffer = @import("framebuffer.zig");
+pub const nfd = @import("nfd");
