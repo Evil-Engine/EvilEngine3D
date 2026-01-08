@@ -25,7 +25,7 @@ pub fn main() !void {
     const path = try std.fs.selfExeDirPathAlloc(Allocator);
     defer Allocator.free(path);
 
-    const texturePath = try std.mem.concat(Allocator, u8, &[_][]const u8{ path, "\\Rock051_1K-JPG_Color.jpg" });
+    const texturePath = try std.mem.concat(Allocator, u8, &[_][]const u8{ path, "\\Assets\\Rock051_1K-JPG_Color.jpg" });
     defer Allocator.free(texturePath);
 
     std.debug.print("{s}\n", .{texturePath});

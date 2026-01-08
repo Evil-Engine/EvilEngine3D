@@ -71,6 +71,7 @@ pub fn build(b: *std.Build) !void {
     });
 
     b.installArtifact(exe);
+    b.installDirectory(.{ .install_dir = .bin, .source_dir = b.path("editor/Assets/"), .install_subdir = "Assets" });
 
     const run_cmd = b.addRunArtifact(exe);
 

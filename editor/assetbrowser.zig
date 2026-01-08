@@ -11,9 +11,9 @@ pub const AssetBrowser = struct {
         const path = try std.fs.selfExeDirPathAlloc(allocator);
         defer allocator.free(path);
 
-        const scriptTexturePath = try std.mem.concat(allocator, u8, &[_][]const u8{ path, "\\Script-Icon.png" });
-        const folderTexturePath = try std.mem.concat(allocator, u8, &[_][]const u8{ path, "\\Folder-Icon.png" });
-        const meshTexturePath = try std.mem.concat(allocator, u8, &[_][]const u8{ path, "\\Mesh-Icon.png" });
+        const scriptTexturePath = try std.mem.concat(allocator, u8, &[_][]const u8{ path, "\\Assets\\Script-Icon.png" });
+        const folderTexturePath = try std.mem.concat(allocator, u8, &[_][]const u8{ path, "\\Assets\\Folder-Icon.png" });
+        const meshTexturePath = try std.mem.concat(allocator, u8, &[_][]const u8{ path, "\\Assets\\Mesh-Icon.png" });
         defer {
             allocator.free(scriptTexturePath);
             allocator.free(folderTexturePath);
