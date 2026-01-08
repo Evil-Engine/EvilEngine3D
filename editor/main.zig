@@ -25,14 +25,14 @@ pub fn main() !void {
     const path = try std.fs.selfExeDirPathAlloc(Allocator);
     defer Allocator.free(path);
 
-    const texturePath = try std.mem.concat(Allocator, u8, &[_][]const u8{ path, "\\Will-it-hurt.png" });
+    const texturePath = try std.mem.concat(Allocator, u8, &[_][]const u8{ path, "\\Rock051_1K-JPG_Color.jpg" });
     defer Allocator.free(texturePath);
 
     std.debug.print("{s}\n", .{texturePath});
 
     var Shader = try EE3D.shader.Shader.init(Allocator, "default.vert", "default.frag");
 
-    var Texture = try EE3D.texture.Texture.init(Allocator, texturePath, gl.TEXTURE_2D, gl.TEXTURE1, gl.RGBA, gl.UNSIGNED_BYTE);
+    var Texture = try EE3D.texture.Texture.init(Allocator, texturePath, gl.TEXTURE_2D, gl.TEXTURE1, gl.RGB, gl.UNSIGNED_BYTE);
     var TextureList = try std.ArrayList(EE3D.texture.Texture).initCapacity(Allocator, 2);
     defer TextureList.deinit(Allocator);
 
