@@ -49,7 +49,7 @@ pub fn main() !void {
     var assetBrowser = try AssetBrowser.init(Allocator);
     defer assetBrowser.deinit();
 
-    var projectManager = ProjectManager.init();
+    var projectManager = ProjectManager.init(Allocator);
 
     var viewport = Viewport.init(&window, &projectManager);
     defer viewport.deinit();
