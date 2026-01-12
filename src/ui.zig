@@ -86,7 +86,7 @@ pub const UI = struct {
     Window: window.Window,
 };
 
-fn rgba1(r: u8, g: u8, b: u8, a: u8) [4]f32 {
+pub fn rgba1(r: u8, g: u8, b: u8, a: u8) [4]f32 {
     const rf = srgbToLinear(@as(f32, @floatFromInt(r)) / 255.0);
     const gf = srgbToLinear(@as(f32, @floatFromInt(g)) / 255.0);
     const bf = srgbToLinear(@as(f32, @floatFromInt(b)) / 255.0);

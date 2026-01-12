@@ -1,3 +1,4 @@
 pub const ProjectData = struct {
-    name: []u8 = "NoName",
+    name: []const u8 = "NoName",
+    path: []const u8 = "NoPath",
 };

@@ -1,7 +1,7 @@
 const EE3D = @import("EE3D");
 const gl = EE3D.zopengl.bindings;
 const std = @import("std");
-const ProjectManager = @import("projectmanager.zig").ProjectManager;
+const ProjectManager = @import("projectManager.zig").ProjectManager;
 const camera = EE3D.camera;
 const cglm = EE3D.cglm;
 const FrameBuffer = EE3D.FrameBuffer.FrameBuffer;
@@ -64,7 +64,6 @@ pub const Viewport = struct {
 
             const buttonPaddingX = 20;
             const buttonWidth = buttonTextSize[0] + buttonPaddingX * 2;
-            //const buttonHeight = buttonTextSize[1] * 2;
 
             const buttonPosX = width * 0.5 - buttonWidth * 0.5;
             const buttonPosY = posY + buttonTextSize[1] + 24;
