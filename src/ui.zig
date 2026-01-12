@@ -72,6 +72,8 @@ pub const UI = struct {
         style.colors[@as(usize, @intFromEnum(zgui.StyleCol.modal_window_dim_bg))] = rgba1(73, 77, 77, 120);
 
         style.window_rounding = 8;
+        style.grab_rounding = 4;
+        style.tab_rounding = 4;
         style.window_padding = [2]f32{ 8.0, 8.0 };
     }
 

@@ -82,24 +82,7 @@ pub const ProjectManager = struct {
                     if (self.currentState.selectedCreateProjectPath == null) {
                         self.currentState.currentCreateProjectError = "Select a path before trying to create a project";
                     } else {
-                        var buffer: [4096]u8 = undefined;
-                        var writer: std.Io.Writer = .fixed(&buffer);
-
-                        const nameLen = std.mem.indexOf(u8, self.currentState.currentCreateProjectName, &[_]u8{0}) orelse self.currentState.currentCreateProjectName.len;
-                        const nameSlice = self.currentState.currentCreateProjectName[0..nameLen];
-                        const newProj = ProjectData.ProjectData{ .name = nameSlice, .path = self.currentState.selectedCreateProjectPath.? };
-
-                        try json.Stringify.value(newProj, .{ .whitespace = .indent_3 }, &writer);
-
-                        const projFilePath = try std.fs.path.join(self.allocator, &[_][]const u8{ self.currentState.selectedCreateProjectPath.?, "project.EEProj" });
-                        defer self.allocator.free(projFilePath);
-
-                        const projFile = try std.fs.cwd().createFile(projFilePath, .{});
-                        defer projFile.close();
-
-                        try projFile.writeAll(writer.buffered());
-
-                        self.currentProject = newProj;
+                        try createDefaultProjectAtCurrentPath(self);
                     }
                 }
 
@@ -108,6 +91,49 @@ pub const ProjectManager = struct {
                 }
             },
         }
+    }
+
+    /// God will not forgive me for this function :P
+    fn createDefaultProjectAtCurrentPath(self: *ProjectManager) !void {
+        var buffer: [4096]u8 = undefined;
+        var writer: std.Io.Writer = .fixed(&buffer);
+
+        const nameLen = std.mem.indexOf(u8, self.currentState.currentCreateProjectName, &[_]u8{0}) orelse self.currentState.currentCreateProjectName.len;
+        const nameSlice = self.currentState.currentCreateProjectName[0..nameLen];
+
+        const copiedName: []u8 = try self.allocator.alloc(u8, nameSlice.len);
+
+        // this is here because of the double deinit issue thingy
+        std.mem.copyForwards(u8, copiedName, nameSlice);
+
+        const newProj = ProjectData.ProjectData{ .name = copiedName, .path = self.currentState.selectedCreateProjectPath.? };
+
+        try json.Stringify.value(newProj, .{ .whitespace = .indent_3 }, &writer);
+
+        const projFilePath = try std.fs.path.join(self.allocator, &[_][]const u8{ self.currentState.selectedCreateProjectPath.?, "project.EEProj" });
+        defer self.allocator.free(projFilePath);
+
+        const projFile = try std.fs.cwd().createFile(projFilePath, .{});
+        defer projFile.close();
+
+        try projFile.writeAll(writer.buffered());
+
+        self.currentProject = newProj;
+
+        const assetsDirPath = try std.fs.path.join(self.allocator, &[_][]const u8{ self.currentState.selectedCreateProjectPath.?, "Assets" });
+        defer self.allocator.free(assetsDirPath);
+
+        std.fs.cwd().makeDir(assetsDirPath) catch |err| {
+            switch (err) {
+                std.posix.MakeDirError.PathAlreadyExists, std.posix.MakeDirError.AccessDenied => {
+                    try EE3D.logging.Error("Failed to make dir at: {s} because: {s}", .{ assetsDirPath, @errorName(err) });
+                },
+                else => {
+                    try EE3D.logging.Error("Failed to make dir at: {s} because: {s}, And is considered unhandleable by the engine.", .{ assetsDirPath, @errorName(err) });
+                    return error.UnhandleableError;
+                },
+            }
+        };
     }
 
     allocator: std.mem.Allocator,
