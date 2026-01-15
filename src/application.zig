@@ -2,7 +2,7 @@ const glfw = @import("zglfw");
 const zopengl = @import("zopengl");
 const application = @import("application.zig");
 const std = @import("std");
-const logging = @import("utils/logging.zig");
+const logging = @import("Utils/logging.zig");
 
 pub var initialized: bool = false;
 pub var allocator: std.mem.Allocator = undefined;

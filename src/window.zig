@@ -1,7 +1,7 @@
 const glfw = @import("zglfw");
 const zopengl = @import("zopengl");
 const application = @import("application.zig");
-const logging = @import("utils/logging.zig");
+const logging = @import("Utils/logging.zig");
 const gl = zopengl.bindings;
 
 pub const Window = struct {

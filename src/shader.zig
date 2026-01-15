@@ -1,4 +1,4 @@
-const file = @import("utils/file.zig");
+const file = @import("Utils/file.zig");
 const logging = @import("Utils/logging.zig");
 const std = @import("std");
 const zopengl = @import("zopengl");

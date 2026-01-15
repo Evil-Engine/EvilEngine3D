@@ -4,10 +4,10 @@ const std = @import("std");
 const camera = EE3D.camera;
 const cglm = EE3D.cglm;
 const UI = EE3D.ui.UI;
-const AssetBrowser = @import("assetBrowser.zig").AssetBrowser;
+const AssetBrowser = @import("assetbrowser.zig").AssetBrowser;
 const Viewport = @import("viewport.zig").Viewport;
-const ViewportCamera = @import("viewportCamera.zig").ViewportCamera;
-const ProjectManager = @import("projectManager.zig").ProjectManager;
+const ViewportCamera = @import("viewportcamera.zig").ViewportCamera;
+const ProjectManager = @import("projectmanager.zig").ProjectManager;
 
 pub fn main() !void {
     var app = try EE3D.application.Application.init();
