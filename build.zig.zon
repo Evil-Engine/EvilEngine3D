@@ -49,8 +49,8 @@
             .hash = "ZigSTBI-0.0.1-XrkkIblzDAAV3n46hNn935AGvtskoJRyxzVTJzNNeZ4W",
         },
         .ZigAssimp = .{
-            .url = "git+https://github.com/CoolPuppyKid/ZigAssimp.git#ede25292f513aafa31db8abc644ffd58b6e3f90d",
-            .hash = "ZigAssimp-0.0.0-1H1OBdpiAAAA3lvlkjfu6_J5mQ3Au6LXkgxz3v4I9Zb_",
+            .url = "git+https://github.com/CoolPuppyKid/ZigAssimp#1342ea4dd64b8cc7aa30b18c9ba927ccdb1780c0",
+            .hash = "ZigAssimp-0.0.0-1H1OBe1kAAAbBhIWP2x3MOwf3tBCIY93QR40ksdxISEd",
         },
         .zgui = .{
             .url = "git+https://github.com/zig-gamedev/zgui.git#4293fd37503ad9c680193b42990bd6b5ec4876cf",
