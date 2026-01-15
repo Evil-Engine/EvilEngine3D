@@ -45,8 +45,8 @@
             .hash = "zglfw-0.10.0-dev-zgVDNHO2IQDy_fSdwY5U4z42rHUuKgt7T9f-qmQ3FnuL",
         },
         .ZigSTBI = .{
-            .url = "git+https://github.com/CoolPuppyKid/ZigSTBI.git#ff7ea6362ec0baa7b3bad2e31ceabd5e34dc200a",
-            .hash = "ZigSTBI-0.0.1-XrkkIblzDAAV3n46hNn935AGvtskoJRyxzVTJzNNeZ4W",
+            .url = "git+https://github.com/CoolPuppyKid/ZigSTBI.git#ff0af34c4afab5054d81a3cfbadafc15f0863856",
+            .hash = "ZigSTBI-0.0.1-XrkkIdNyDACsiDMuyps59BBtk6Ov4L7IHw7PwFVkQJ8b",
         },
         .ZigAssimp = .{
             .url = "git+https://github.com/CoolPuppyKid/ZigAssimp#8a22edd0a75c418015924e7318b2fb7acf657c52",
