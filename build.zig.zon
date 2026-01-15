@@ -60,6 +60,10 @@
             .url = "git+https://github.com/CoolPuppyKid/nfd-zig.git?ref=main#802143be8c29fc35ffda80a13c1ad1b21eb56656",
             .hash = "NFD-0.0.0-erBH3-GJBgA2FF9iwLK3ZdQCqyjVxCgTMdAT_Ffsi5fY",
         },
+        .CGLM = .{
+            .url = "git+https://github.com/Evil-Engine/cglm.git#ad790a41175b4dcbae01cb9572a9ad1783bb7e65",
+            .hash = "CGLM-0.0.0-RMXTMH89HgBPz6o73Itga8qZ5orsh3-fvadf4qSNWZWD",
+        },
     },
     .paths = .{
         "build.zig",

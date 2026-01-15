@@ -54,14 +54,13 @@ pub fn build(b: *std.Build) !void {
 
     const assimp = b.dependency("ZigAssimp", .{ .formats = "FBX,Obj,B3D,Blend,glTF,glTF2" });
 
-    const cglm_build = @import("vendor/cglm/build.zig");
-    const cglm_lib = cglm_build.createLib(b, target, optimize);
+    const cglm = b.dependency("CGLM", .{});
 
-    lib.linkLibrary(cglm_lib);
+    lib.addIncludePath(cglm.path("include"));
+
+    lib.linkLibrary(cglm.artifact("cglm"));
     lib.linkLibrary(assimp.artifact("assimp"));
     lib.linkLibrary(zgui.artifact("imgui"));
-
-    lib_mod.addIncludePath(b.path("vendor/cglm/include/"));
 
     lib_mod.addIncludePath(assimp.path("include"));
 
