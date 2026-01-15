@@ -28,3 +28,14 @@ cd EvilEngine3D
 ```sh
 zig build run
 ```
+
+## Contributing
+
+If you are planning to contribute,
+Please read:
+
+[Contributing Guide](https://github.com/Evil-Engine/EvilEngine3D/blob/main/CONTRIBUTING.md)
+
+If you use AI:
+
+[AI Usage Guide](https://github.com/Evil-Engine/EvilEngine3D/blob/main/AI.md)
