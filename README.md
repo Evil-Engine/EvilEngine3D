@@ -1,5 +1,9 @@
 # Evil Engine 3D
 
+## Note about Assimp:
+
+Its evil, If you have issues compiling please post the full error log in [Issues](https://github.com/Evil-Engine/EvilEngine3D/issues).
+
 ## About:
 
 Evil Engine 3D is a Game Engine designed to make large open world vehicle building games,
@@ -12,7 +16,7 @@ Supported Operating Systems:
 | -------- | -------------              |
 | Windows  | Yes.                       |
 | Linux    | Yes, But may have issues.  |
-| MacOS    | Unknown, But should work.  |
+| MacOS    | I dont have a Mac so its unknown, But should work.  |
 
 Building Instructions:
 
