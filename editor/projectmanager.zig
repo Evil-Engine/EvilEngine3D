@@ -1,7 +1,7 @@
 const EE3D = @import("EE3D");
 const std = @import("std");
 const json = std.json;
-const ProjectData = @import("projectdata.zig");
+const Project = @import("project.zig").Project;
 const gl = EE3D.zopengl.bindings;
 const cglm = EE3D.cglm;
 const Texture = EE3D.texture.Texture;
@@ -106,15 +106,15 @@ pub const ProjectManager = struct {
         // this is here because of the double deinit issue thingy
         std.mem.copyForwards(u8, copiedName, nameSlice);
 
-        const newProj = ProjectData.ProjectData{ .name = copiedName, .path = self.currentState.selectedCreateProjectPath.? };
-
-        try json.Stringify.value(newProj, .{ .whitespace = .indent_3 }, &writer);
+        var newProj = Project{ .name = copiedName, .path = self.currentState.selectedCreateProjectPath.? };
 
         const projFilePath = try std.fs.path.join(self.allocator, &[_][]const u8{ self.currentState.selectedCreateProjectPath.?, "project.EEProj" });
         defer self.allocator.free(projFilePath);
 
         const projFile = try std.fs.cwd().createFile(projFilePath, .{});
         defer projFile.close();
+
+        try newProj.write(&writer);
 
         try projFile.writeAll(writer.buffered());
 
@@ -139,7 +139,7 @@ pub const ProjectManager = struct {
     allocator: std.mem.Allocator,
     currentMenuState: ProjectManagerMenuState,
     currentState: ProjectManagerState,
-    currentProject: ?ProjectData.ProjectData = null,
+    currentProject: ?Project = null,
 };
 
 pub const ProjectManagerMenuState = enum(u32) {

@@ -13,7 +13,7 @@ pub fn main() !void {
     var app = try EE3D.application.Application.init();
     defer app.destroy();
 
-    var window = try EE3D.window.Window.init(990, 540, "Example");
+    var window = try EE3D.window.Window.init(990, 540, "Editor");
     defer window.destroy();
     try app.create_context();
 
