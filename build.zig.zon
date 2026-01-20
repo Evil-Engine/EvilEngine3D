@@ -45,11 +45,11 @@
             .hash = "zglfw-0.10.0-dev-zgVDNHO2IQDy_fSdwY5U4z42rHUuKgt7T9f-qmQ3FnuL",
         },
         .ZigSTBI = .{
-            .url = "git+https://github.com/CoolPuppyKid/ZigSTBI.git#ff0af34c4afab5054d81a3cfbadafc15f0863856",
+            .url = "git+https://github.com/Evil-Engine/ZigSTBI.git#ff0af34c4afab5054d81a3cfbadafc15f0863856",
             .hash = "ZigSTBI-0.0.1-XrkkIdNyDACsiDMuyps59BBtk6Ov4L7IHw7PwFVkQJ8b",
         },
         .ZigAssimp = .{
-            .url = "git+https://github.com/CoolPuppyKid/ZigAssimp#cd58aad200fd41bf6f3a06b3baf3ca16d2a16998",
+            .url = "git+https://github.com/Evil-Engine/ZigAssimp.git#cd58aad200fd41bf6f3a06b3baf3ca16d2a16998",
             .hash = "ZigAssimp-0.0.0-1H1OBYFnAAAhxworxqOy-kH64pFt81eutoz0e3wlCJIt",
         },
         .zgui = .{
@@ -57,7 +57,7 @@
             .hash = "zgui-0.6.0-dev--L6sZHr3bQCeckUeL9YPiARJirsOyjQUZlrg7JxbPzbp",
         },
         .NFD = .{
-            .url = "git+https://github.com/CoolPuppyKid/nfd-zig.git?ref=main#802143be8c29fc35ffda80a13c1ad1b21eb56656",
+            .url = "git+https://github.com/Evil-Engine/nfd-zig.git#802143be8c29fc35ffda80a13c1ad1b21eb56656",
             .hash = "NFD-0.0.0-erBH3-GJBgA2FF9iwLK3ZdQCqyjVxCgTMdAT_Ffsi5fY",
         },
         .CGLM = .{
