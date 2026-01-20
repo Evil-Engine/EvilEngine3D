@@ -22,6 +22,7 @@ pub const ProjectManager = struct {
         }
         if (self.currentProject) |proj| {
             self.allocator.free(proj.name);
+            self.allocator.free(proj.path);
         }
         self.allocator.free(self.currentState.currentCreateProjectName);
     }
@@ -37,7 +38,7 @@ pub const ProjectManager = struct {
                     defer if (project_path) |p| nfd.freePath(p);
 
                     if (project_path) |path| {
-                        _ = path;
+                        try openProject(self, path);
                         zgui.closeCurrentPopup();
                     } else {
                         try EE3D.logging.Error("Please select a path", .{});
@@ -95,9 +96,6 @@ pub const ProjectManager = struct {
 
     /// God will not forgive me for this function :P
     fn createDefaultProjectAtCurrentPath(self: *ProjectManager) !void {
-        var buffer: [4096]u8 = undefined;
-        var writer: std.Io.Writer = .fixed(&buffer);
-
         const nameLen = std.mem.indexOf(u8, self.currentState.currentCreateProjectName, &[_]u8{0}) orelse self.currentState.currentCreateProjectName.len;
         const nameSlice = self.currentState.currentCreateProjectName[0..nameLen];
 
@@ -111,14 +109,10 @@ pub const ProjectManager = struct {
         const projFilePath = try std.fs.path.join(self.allocator, &[_][]const u8{ self.currentState.selectedCreateProjectPath.?, "project.EEProj" });
         defer self.allocator.free(projFilePath);
 
-        const projFile = try std.fs.cwd().createFile(projFilePath, .{});
+        var projFile = try std.fs.cwd().createFile(projFilePath, .{});
         defer projFile.close();
 
-        try newProj.write(&writer);
-
-        try projFile.writeAll(writer.buffered());
-
-        self.currentProject = newProj;
+        try newProj.write(&projFile);
 
         const assetsDirPath = try std.fs.path.join(self.allocator, &[_][]const u8{ self.currentState.selectedCreateProjectPath.?, "Assets" });
         defer self.allocator.free(assetsDirPath);
@@ -134,6 +128,13 @@ pub const ProjectManager = struct {
                 },
             }
         };
+
+        try openProject(self, projFilePath);
+    }
+
+    fn openProject(self: *ProjectManager, path: []const u8) !void {
+        _ = path;
+        self.currentProject = null;
     }
 
     allocator: std.mem.Allocator,
