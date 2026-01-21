@@ -6,6 +6,10 @@ pub fn build(b: *std.Build) !void {
 
     const optimize = b.standardOptimizeOption(.{});
 
+    if (target.result.os.tag == .macos) {
+        std.debug.print("Target operating system is not supported by EE3D.\n", .{});
+    }
+
     const lib_mod = b.createModule(.{
         .root_source_file = b.path("src/root.zig"),
         .target = target,

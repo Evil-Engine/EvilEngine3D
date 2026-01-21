@@ -110,9 +110,9 @@ pub const ProjectManager = struct {
         defer self.allocator.free(projFilePath);
 
         var projFile = try std.fs.cwd().createFile(projFilePath, .{});
-        defer projFile.close();
 
         try newProj.write(&projFile);
+        projFile.close();
 
         const assetsDirPath = try std.fs.path.join(self.allocator, &[_][]const u8{ self.currentState.selectedCreateProjectPath.?, "Assets" });
         defer self.allocator.free(assetsDirPath);
@@ -133,7 +133,18 @@ pub const ProjectManager = struct {
     }
 
     fn openProject(self: *ProjectManager, path: []const u8) !void {
-        _ = path;
+        std.debug.print("{s}\n", .{path});
+        var projFile = try std.fs.openFileAbsolute(path, .{ .mode = .read_write });
+        defer projFile.close();
+
+        try projFile.seekTo(0);
+
+        const proj = try Project.read(&projFile, self.allocator);
+
+        self.currentProject = proj;
+    }
+
+    pub fn closeCurrentProject(self: *ProjectManager) !void {
         self.currentProject = null;
     }
 

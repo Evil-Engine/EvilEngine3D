@@ -16,7 +16,7 @@ Supported Operating Systems:
 | -------- | -------------              |
 | Windows  | Yes.                       |
 | Linux    | Yes, But may have issues.  |
-| MacOS    | I dont have a Mac so its unknown, But should work.  |
+| MacOS    | Does not work.             |
 
 Building Instructions:
 

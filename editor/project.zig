@@ -31,6 +31,7 @@ pub const Project = struct {
         var magic_bytes: [4]u8 = undefined;
         try reader.readSliceAll(&magic_bytes);
         const magic = std.mem.readInt(u32, &magic_bytes, .little);
+        std.debug.print("Magic: 0x{X}\n", .{magic});
         if (magic != ProjectMagic) {
             return error.InvalidProjectValue;
         }

@@ -8,6 +8,7 @@ const AssetBrowser = @import("assetbrowser.zig").AssetBrowser;
 const Viewport = @import("viewport.zig").Viewport;
 const ViewportCamera = @import("viewportcamera.zig").ViewportCamera;
 const ProjectManager = @import("projectmanager.zig").ProjectManager;
+const Hierarchy = @import("hierarchy.zig").Hierarchy;
 
 pub fn main() !void {
     var app = try EE3D.application.Application.init();
@@ -57,6 +58,8 @@ pub fn main() !void {
     var viewportCamera = ViewportCamera.init(&Camera, &window, viewport);
     defer viewport.deinit();
 
+    var hierarchy = Hierarchy{};
+
     gl.enable(gl.DEPTH_TEST);
 
     while (!window.shouldClose()) {
@@ -90,16 +93,11 @@ pub fn main() !void {
             }
             EE3D.zgui.endMainMenuBar();
         }
+        try hierarchy.renderUI();
 
         viewport.endRender();
 
         try viewport.renderUI();
-        if (EE3D.zgui.begin("Hierarchy", .{})) {
-            if (EE3D.zgui.button("Test", .{})) {
-                std.debug.print("Test\n", .{});
-            }
-        }
-        EE3D.zgui.end();
         try assetBrowser.draw();
 
         ui.endRender();

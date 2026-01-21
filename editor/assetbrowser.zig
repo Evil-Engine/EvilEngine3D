@@ -8,27 +8,25 @@ const UI = EE3D.ui.UI;
 
 pub const AssetBrowser = struct {
     pub fn init(allocator: std.mem.Allocator) !AssetBrowser {
+        var icons = std.AutoHashMap(AssetType, Texture).init(allocator);
+        try registerIcon(allocator, &icons, .GenericFile, "Generic-Icon.png");
+        try registerIcon(allocator, &icons, .Folder, "Folder-Icon.png");
+        try registerIcon(allocator, &icons, .Script, "Script-Icon.png");
+        try registerIcon(allocator, &icons, .Mesh, "Mesh-Icon.png");
+
+        return AssetBrowser{ .allocator = allocator, .icons = icons };
+    }
+
+    /// Btw iconName should be like "Script-Icon.png"
+    fn registerIcon(allocator: std.mem.Allocator, iconHashMap: *std.AutoHashMap(AssetType, Texture), iconType: AssetType, iconName: []const u8) !void {
         const path = try std.fs.selfExeDirPathAlloc(allocator);
         defer allocator.free(path);
 
-        const scriptTexturePath = try std.fs.path.join(allocator, &[_][]const u8{ path, "Assets", "Script-Icon.png" });
-        const folderTexturePath = try std.fs.path.join(allocator, &[_][]const u8{ path, "Assets", "Folder-Icon.png" });
-        const meshTexturePath = try std.fs.path.join(allocator, &[_][]const u8{ path, "Assets", "Mesh-Icon.png" });
-        defer {
-            allocator.free(scriptTexturePath);
-            allocator.free(folderTexturePath);
-            allocator.free(meshTexturePath);
-        }
+        const iconPath = try std.fs.path.join(allocator, &[_][]const u8{ path, "Assets", iconName });
+        defer allocator.free(iconPath);
 
-        const folderIcon = try Texture.init(allocator, folderTexturePath, gl.TEXTURE_2D, null, gl.RGBA, gl.UNSIGNED_BYTE);
-        const meshIcon = try Texture.init(allocator, meshTexturePath, gl.TEXTURE_2D, null, gl.RGBA, gl.UNSIGNED_BYTE);
-        const scriptIcon = try Texture.init(allocator, scriptTexturePath, gl.TEXTURE_2D, null, gl.RGBA, gl.UNSIGNED_BYTE);
-        var icons = std.AutoHashMap(AssetType, Texture).init(allocator);
-        try icons.put(.Folder, folderIcon);
-        try icons.put(.Mesh, meshIcon);
-        try icons.put(.Script, scriptIcon);
-
-        return AssetBrowser{ .allocator = allocator, .icons = icons };
+        const icon = try Texture.init(allocator, iconPath, gl.TEXTURE_2D, null, gl.RGBA, gl.UNSIGNED_BYTE);
+        try iconHashMap.put(iconType, icon);
     }
 
     pub fn deinit(self: *AssetBrowser) void {
@@ -46,37 +44,38 @@ pub const AssetBrowser = struct {
             const icon_size = 100 + 3;
             const columns: i32 = @max(1, @as(i32, @intFromFloat(availSpaceX / icon_size)));
 
-            var i: u8 = 0;
+            _ = self;
+            //var i: u8 = 0;
             if (EE3D.zgui.beginTable("AssetGrid", .{ .column = columns, .flags = .{ .resizable = true, .no_borders_in_body = true, .no_host_extend_x = true, .sizing = .stretch_same } })) {
-                while (i < 255) : (i += 1) {
-                    _ = EE3D.zgui.tableNextColumn();
-                    EE3D.zgui.beginGroup();
-                    const icon = if (i == 0) self.icons.get(.Mesh).? else if (i == 1) self.icons.get(.Script).? else self.icons.get(.Folder).?;
-                    const tex_id: EE3D.zgui.TextureIdent = @enumFromInt(@as(u64, @intCast(icon.id)));
-                    const folderId = try std.fmt.allocPrint(self.allocator, "Folder{d}", .{i});
-                    const folderIdC = try self.allocator.dupeZ(u8, folderId);
-                    defer {
-                        self.allocator.free(folderIdC);
-                        self.allocator.free(folderId);
-                    }
-
-                    _ = EE3D.zgui.imageButton(
-                        folderIdC,
-                        .{
-                            .tex_data = null,
-                            .tex_id = tex_id,
-                        },
-                        .{
-                            .w = 100,
-                            .h = 100,
-                            .uv0 = [_]f32{ 0, 1 },
-                            .uv1 = [_]f32{ 1, 0 },
-                        },
-                    );
-
-                    EE3D.zgui.text("Folder Name", .{});
-                    EE3D.zgui.endGroup();
-                }
+                //while (i < 255) : (i += 1) {
+                //    _ = EE3D.zgui.tableNextColumn();
+                //    EE3D.zgui.beginGroup();
+                //    const icon = if (i == 0) self.icons.get(.Mesh).? else if (i == 1) self.icons.get(.Script).? else self.icons.get(.Folder).?;
+                //    const tex_id: EE3D.zgui.TextureIdent = @enumFromInt(@as(u64, @intCast(icon.id)));
+                //    const folderId = try std.fmt.allocPrint(self.allocator, "Folder{d}", .{i});
+                //    const folderIdC = try self.allocator.dupeZ(u8, folderId);
+                //    defer {
+                //        self.allocator.free(folderIdC);
+                //        self.allocator.free(folderId);
+                //    }
+                //
+                //    _ = EE3D.zgui.imageButton(
+                //        folderIdC,
+                //        .{
+                //            .tex_data = null,
+                //            .tex_id = tex_id,
+                //        },
+                //        .{
+                //            .w = 100,
+                //            .h = 100,
+                //            .uv0 = [_]f32{ 0, 1 },
+                //            .uv1 = [_]f32{ 1, 0 },
+                //        },
+                //    );
+                //
+                //    EE3D.zgui.text("Folder Name", .{});
+                //    EE3D.zgui.endGroup();
+                //}
                 EE3D.zgui.endTable();
             }
         }
