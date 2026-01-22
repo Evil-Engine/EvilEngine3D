@@ -15,6 +15,12 @@ pub const UI = struct {
         zgui.init(application.allocator);
         zgui.backend.init(Window.rawWindow);
         zgui.io.setConfigFlags(.{ .dock_enable = true, .viewport_enable = true });
+
+        const scaleFactor = scaleFactor: {
+            const scale = Window.rawWindow.getContentScale();
+            break :scaleFactor @max(scale[0], scale[1]);
+        };
+        zgui.getStyle().scaleAllSizes(scaleFactor);
         return UI{ .Window = Window };
     }
 
