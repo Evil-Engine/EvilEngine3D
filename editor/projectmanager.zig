@@ -130,6 +130,8 @@ pub const ProjectManager = struct {
         };
 
         try openProject(self, projFilePath);
+        zgui.closeCurrentPopup();
+        self.currentMenuState = .Main;
     }
 
     fn openProject(self: *ProjectManager, path: []const u8) !void {
