@@ -25,11 +25,9 @@ pub const Project = struct {
     }
 
     pub fn read(file: *std.fs.File, allocator: std.mem.Allocator) !Project {
-        var buffer: [4096]u8 = undefined;
-        var reader = file.reader(&buffer).interface;
-
         var magic_bytes: [4]u8 = undefined;
-        try reader.readSliceAll(&magic_bytes);
+        const magic_read = try file.readAll(&magic_bytes);
+        if (magic_read != 4) return error.ReadFailed;
         const magic = std.mem.readInt(u32, &magic_bytes, .little);
         std.debug.print("Magic: 0x{X}\n", .{magic});
         if (magic != ProjectMagic) {
@@ -37,18 +35,20 @@ pub const Project = struct {
         }
 
         var nameLenBytes: [4]u8 = undefined;
-        try reader.readSliceAll(&nameLenBytes);
+        _ = try file.readAll(&nameLenBytes);
         const nameLen = std.mem.readInt(u32, &nameLenBytes, .little);
 
-        const name = try reader.readAlloc(allocator, nameLen);
+        const name = try allocator.alloc(u8, nameLen);
         errdefer allocator.free(name);
+        _ = try file.readAll(name);
 
         var pathLenBytes: [4]u8 = undefined;
-        try reader.readSliceAll(&pathLenBytes);
+        _ = try file.readAll(&pathLenBytes);
         const pathLen = std.mem.readInt(u32, &pathLenBytes, .little);
 
-        const path = try reader.readAlloc(allocator, pathLen);
+        const path = try allocator.alloc(u8, pathLen);
         errdefer allocator.free(path);
+        _ = try file.readAll(path);
 
         return Project{
             .name = name,
