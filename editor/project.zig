@@ -29,9 +29,8 @@ pub const Project = struct {
         const magic_read = try file.readAll(&magic_bytes);
         if (magic_read != 4) return error.ReadFailed;
         const magic = std.mem.readInt(u32, &magic_bytes, .little);
-        std.debug.print("Magic: 0x{X}\n", .{magic});
         if (magic != ProjectMagic) {
-            return error.InvalidProjectValue;
+            return error.InvalidProjectFile;
         }
 
         var nameLenBytes: [4]u8 = undefined;

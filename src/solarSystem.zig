@@ -1,0 +1,1 @@
+pub const SolarSystem = struct {};

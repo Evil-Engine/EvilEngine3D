@@ -29,8 +29,6 @@ pub fn main() !void {
     const texturePath = try std.fs.path.join(Allocator, &[_][]const u8{ path, "Assets", "Rock051_1K-JPG_Color.jpg" });
     defer Allocator.free(texturePath);
 
-    std.debug.print("{s}\n", .{texturePath});
-
     var Shader = try EE3D.shader.Shader.init(Allocator, "default.vert", "default.frag");
 
     var Texture = try EE3D.texture.Texture.init(Allocator, texturePath, gl.TEXTURE_2D, gl.TEXTURE1, gl.RGB, gl.UNSIGNED_BYTE);

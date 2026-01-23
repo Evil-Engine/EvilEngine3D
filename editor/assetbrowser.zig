@@ -87,6 +87,11 @@ pub const AssetBrowser = struct {
     icons: std.AutoHashMap(AssetType, Texture),
 };
 
+pub const AssetBrowserEntry = struct {
+    name: []const u8,
+    assetType: AssetType,
+};
+
 pub const AssetType = enum {
     Folder,
     Image,

@@ -120,10 +120,10 @@ pub const ProjectManager = struct {
         std.fs.cwd().makeDir(assetsDirPath) catch |err| {
             switch (err) {
                 std.posix.MakeDirError.PathAlreadyExists, std.posix.MakeDirError.AccessDenied => {
-                    try EE3D.logging.Error("Failed to make dir at: {s} because: {s}", .{ assetsDirPath, @errorName(err) });
+                    try EE3D.logging.Error("Failed to make dir at: {s}. because: {s}", .{ assetsDirPath, @errorName(err) });
                 },
                 else => {
-                    try EE3D.logging.Error("Failed to make dir at: {s} because: {s}, And is considered unhandleable by the engine.", .{ assetsDirPath, @errorName(err) });
+                    try EE3D.logging.Error("Failed to make dir at: {s}. because: {s}, And is considered unhandleable by the engine.", .{ assetsDirPath, @errorName(err) });
                     return error.UnhandleableError;
                 },
             }
@@ -135,7 +135,6 @@ pub const ProjectManager = struct {
     }
 
     fn openProject(self: *ProjectManager, path: []const u8) !void {
-        std.debug.print("{s}\n", .{path});
         var projFile = try std.fs.openFileAbsolute(path, .{ .mode = .read_write });
         defer projFile.close();
 

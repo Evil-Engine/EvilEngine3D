@@ -48,46 +48,49 @@ pub const Viewport = struct {
             const height = zgui.getContentRegionAvail()[1];
             self.viewportPos = zgui.getItemRectMin();
             self.viewportSize = [2]f32{ width, height };
-            const warningText = "No project loaded.";
 
-            zgui.pushFont(EE3D.ui.bigFont, 48);
-            const textSize = zgui.calcTextSize(warningText, .{});
+            if (self.projectManager.currentProject != null) {
+                gl.viewport(0, 0, @intFromFloat(width), @intFromFloat(height));
 
-            const posX = (width * 0.5 - textSize[0] * 0.5) - 12;
-            const posY = (height * 0.5 - textSize[1] * 0.5) - 12;
+                const tex_id: zgui.TextureIdent = @enumFromInt(@as(u64, @intCast(self.viewportBuffer.texture)));
+                gl.activeTexture(gl.TEXTURE0);
+                gl.bindTexture(gl.TEXTURE_2D, self.viewportBuffer.texture);
+                self.viewportBuffer.resizeFrameBuffer(@intFromFloat(width), @intFromFloat(height));
+                zgui.image(.{ .tex_data = null, .tex_id = tex_id }, .{ .w = width, .h = height, .uv0 = [_]f32{ 0, 1 }, .uv1 = [_]f32{ 1, 0 } });
+                isFocused = zgui.isItemFocused();
+                isHovered = zgui.isItemHovered(.{});
+            } else {
+                const warningText = "No project loaded.";
 
-            zgui.setCursorPos(.{ posX, posY });
-            zgui.text(warningText, .{});
+                zgui.pushFont(EE3D.ui.bigFont, 48);
+                const textSize = zgui.calcTextSize(warningText, .{});
 
-            const buttonText = "Project Manager";
-            const buttonTextSize = zgui.calcTextSize(buttonText, .{});
+                const posX = (width * 0.5 - textSize[0] * 0.5) - 12;
+                const posY = (height * 0.5 - textSize[1] * 0.5) - 12;
 
-            const buttonPaddingX = 20;
-            const buttonWidth = buttonTextSize[0] + buttonPaddingX * 2;
+                zgui.setCursorPos(.{ posX, posY });
+                zgui.text(warningText, .{});
 
-            const buttonPosX = width * 0.5 - buttonWidth * 0.5;
-            const buttonPosY = posY + buttonTextSize[1] + 24;
+                const buttonText = "Project Manager";
+                const buttonTextSize = zgui.calcTextSize(buttonText, .{});
 
-            zgui.setCursorPos([_]f32{ buttonPosX, buttonPosY });
-            if (zgui.button("Project Manager", .{})) {
-                zgui.openPopup("Project Manager", .{});
+                const buttonPaddingX = 20;
+                const buttonWidth = buttonTextSize[0] + buttonPaddingX * 2;
+
+                const buttonPosX = width * 0.5 - buttonWidth * 0.5;
+                const buttonPosY = posY + buttonTextSize[1] + 24;
+
+                zgui.setCursorPos([_]f32{ buttonPosX, buttonPosY });
+                if (zgui.button("Project Manager", .{})) {
+                    zgui.openPopup("Project Manager", .{});
+                }
+                zgui.popFont();
+
+                if (zgui.beginPopupModal("Project Manager", .{})) {
+                    try self.projectManager.draw();
+                    zgui.endPopup();
+                }
             }
-            zgui.popFont();
-
-            if (zgui.beginPopupModal("Project Manager", .{})) {
-                try self.projectManager.draw();
-                zgui.endPopup();
-            }
-
-            //gl.viewport(0, 0, @intFromFloat(width), @intFromFloat(height));
-            //
-            //const tex_id: zgui.TextureIdent = @enumFromInt(@as(u64, @intCast(self.viewportBuffer.texture)));
-            //gl.activeTexture(gl.TEXTURE0);
-            //gl.bindTexture(gl.TEXTURE_2D, self.viewportBuffer.texture);
-            //self.viewportBuffer.resizeFrameBuffer(@intFromFloat(width), @intFromFloat(height));
-            //zgui.image(.{ .tex_data = null, .tex_id = tex_id }, .{ .w = width, .h = height, .uv0 = [_]f32{ 0, 1 }, .uv1 = [_]f32{ 1, 0 } });
-            //isFocused = zgui.isItemFocused();
-            //isHovered = zgui.isItemHovered(.{});
         }
         zgui.end();
     }
