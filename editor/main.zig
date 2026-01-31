@@ -18,13 +18,17 @@ pub fn main() !void {
     defer window.destroy();
     try app.create_context();
 
-    var ui = UI.init(window);
-    ui.applyDarkTheme();
-
     const Allocator = EE3D.application.allocator;
-
     const path = try std.fs.selfExeDirPathAlloc(Allocator);
     defer Allocator.free(path);
+
+    const windowIconPath = try std.fs.path.join(Allocator, &[_][]const u8{ path, "Assets", "EvilEngine-Transparent.png" });
+    defer Allocator.free(windowIconPath);
+
+    try window.setIcon(windowIconPath);
+
+    var ui = UI.init(window);
+    ui.applyDarkTheme();
 
     const texturePath = try std.fs.path.join(Allocator, &[_][]const u8{ path, "Assets", "Rock051_1K-JPG_Color.jpg" });
     defer Allocator.free(texturePath);
@@ -56,7 +60,8 @@ pub fn main() !void {
     var viewportCamera = ViewportCamera.init(&Camera, &window, viewport);
     defer viewport.deinit();
 
-    var hierarchy = Hierarchy{};
+    var hierarchy = try Hierarchy.init(Allocator);
+    defer hierarchy.deinit();
 
     gl.enable(gl.DEPTH_TEST);
 

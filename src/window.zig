@@ -2,6 +2,7 @@ const glfw = @import("zglfw");
 const zopengl = @import("zopengl");
 const application = @import("application.zig");
 const logging = @import("Utils/logging.zig");
+const zigstbi = @import("zigstbi");
 const gl = zopengl.bindings;
 
 pub const Window = struct {
@@ -45,6 +46,15 @@ pub const Window = struct {
             self.height = currentSize[1];
             if (updateViewport) gl.viewport(0, 0, self.width, self.height);
         }
+    }
+
+    pub fn setIcon(self: *Window, imagePath: []const u8) !void {
+        var images: [1]glfw.Image = undefined;
+        var stbiImg = try zigstbi.load_file(imagePath, 0);
+        defer stbiImg.deinit();
+
+        images[0].pixels = stbiImg.bytes.ptr;
+        glfw.setWindowIcon(self.rawWindow, &images);
     }
 
     pub fn endRender(self: *Window) void {
