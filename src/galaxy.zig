@@ -48,6 +48,10 @@ pub const Galaxy = struct {
         _ = try file.readAll(&buf);
         const systemCount = std.mem.readInt(u64, &buf, .little);
 
+        if (systemCount > 18_446_744_073_709_551_610) {
+            return error.SystemCountTooLarge;
+        }
+
         _ = try file.readAll(&buf);
         const systemTableOffset = std.mem.readInt(u64, &buf, .little);
 
