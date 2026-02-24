@@ -2,6 +2,7 @@ const EE3D = @import("EE3D");
 const std = @import("std");
 const json = std.json;
 const Project = @import("project.zig").Project;
+const AssetBrowser = @import("assetbrowser.zig").AssetBrowser;
 const gl = EE3D.zopengl.bindings;
 const cglm = EE3D.cglm;
 const Texture = EE3D.texture.Texture;
@@ -10,10 +11,10 @@ const zgui = EE3D.zgui;
 const nfd = EE3D.nfd;
 
 pub const ProjectManager = struct {
-    pub fn init(allocator: std.mem.Allocator) !ProjectManager {
+    pub fn init(allocator: std.mem.Allocator, assetBrowser: *AssetBrowser) !ProjectManager {
         const projName: [:0]u8 = try allocator.allocSentinel(u8, 64, 0);
         @memset(projName, 0);
-        return ProjectManager{ .allocator = allocator, .currentMenuState = .Main, .currentState = ProjectManagerState{ .currentCreateProjectName = projName } };
+        return ProjectManager{ .allocator = allocator, .assetBrowser = assetBrowser, .currentMenuState = .Main, .currentState = ProjectManagerState{ .currentCreateProjectName = projName } };
     }
 
     pub fn deinit(self: *ProjectManager) void {
@@ -142,7 +143,15 @@ pub const ProjectManager = struct {
 
         const proj = try Project.read(&projFile, self.allocator);
 
+        const projDir = std.fs.path.dirname(path) orelse ".";
+
+        const assetsDir = try std.fs.path.join(self.allocator, &[_][]const u8{ projDir, "Assets" });
+        defer self.allocator.free(assetsDir);
+
+        try self.assetBrowser.changeDir(assetsDir);
+
         self.currentProject = proj;
+        try self.assetBrowser.changeProjectRoot(assetsDir);
     }
 
     pub fn closeCurrentProject(self: *ProjectManager) !void {
@@ -151,6 +160,7 @@ pub const ProjectManager = struct {
 
     allocator: std.mem.Allocator,
     currentMenuState: ProjectManagerMenuState,
+    assetBrowser: *AssetBrowser,
     currentState: ProjectManagerState,
     currentProject: ?Project = null,
 };

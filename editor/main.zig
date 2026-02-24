@@ -52,7 +52,7 @@ pub fn main() !void {
     var assetBrowser = try AssetBrowser.init(Allocator);
     defer assetBrowser.deinit();
 
-    var projectManager = try ProjectManager.init(Allocator);
+    var projectManager = try ProjectManager.init(Allocator, &assetBrowser);
     defer projectManager.deinit();
 
     var viewport = Viewport.init(&window, &projectManager);
@@ -102,6 +102,9 @@ pub fn main() !void {
 
         try viewport.renderUI();
         try assetBrowser.draw();
+
+        _ = EE3D.zgui.begin("Inspector", .{});
+        EE3D.zgui.end();
 
         ui.endRender();
         window.endRender();

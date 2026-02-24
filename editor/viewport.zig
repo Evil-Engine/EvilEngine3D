@@ -55,8 +55,10 @@ pub const Viewport = struct {
                 const tex_id: zgui.TextureIdent = @enumFromInt(@as(u64, @intCast(self.viewportBuffer.texture)));
                 gl.activeTexture(gl.TEXTURE0);
                 gl.bindTexture(gl.TEXTURE_2D, self.viewportBuffer.texture);
-                self.viewportBuffer.resizeFrameBuffer(@intFromFloat(width), @intFromFloat(height));
-                zgui.image(.{ .tex_data = null, .tex_id = tex_id }, .{ .w = width, .h = height, .uv0 = [_]f32{ 0, 1 }, .uv1 = [_]f32{ 1, 0 } });
+                if (width > 1 and height > 1) {
+                    self.viewportBuffer.resizeFrameBuffer(@intFromFloat(width), @intFromFloat(height));
+                    zgui.image(.{ .tex_data = null, .tex_id = tex_id }, .{ .w = width, .h = height, .uv0 = [_]f32{ 0, 1 }, .uv1 = [_]f32{ 1, 0 } });
+                }
                 isFocused = zgui.isItemFocused();
                 isHovered = zgui.isItemHovered(.{});
             } else {
