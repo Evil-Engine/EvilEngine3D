@@ -10,7 +10,9 @@ pub var allocator: std.mem.Allocator = undefined;
 pub const Application = struct {
     pub fn init() !Application {
         // TODO: I might need to add error handling, but thats a later me issue :D
-        try glfw.init();
+        glfw.init() catch |err| {
+            try logging.Error("Failed to init GLFW {s}\n", .{@errorName(err)});
+        };
         allocator = std.heap.page_allocator;
         initialized = true;
 

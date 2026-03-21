@@ -24,7 +24,7 @@ pub const ViewportCamera = struct {
         if (!Viewport.isHovered and !self.moving) {
             return;
         }
-        if (glfw.getMouseButton(self.window.rawWindow, glfw.MouseButton.left) != glfw.Action.press) {
+        if (glfw.getMouseButton(self.window.rawWindow, glfw.MouseButton.right) != glfw.Action.press) {
             self.firstClick = true;
             try glfw.setInputMode(self.window.rawWindow, glfw.InputMode.cursor, glfw.Cursor.Mode.normal);
             self.moving = false;

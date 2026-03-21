@@ -53,7 +53,11 @@ pub const Window = struct {
         var stbiImg = try zigstbi.load_file(imagePath, 0);
         defer stbiImg.deinit();
 
-        images[0].pixels = stbiImg.bytes.ptr;
+        images[0] = .{
+            .width = @intCast(stbiImg.width),
+            .height = @intCast(stbiImg.height),
+            .pixels = stbiImg.bytes.ptr,
+        };
         glfw.setWindowIcon(self.rawWindow, &images);
     }
 
