@@ -12,6 +12,7 @@ pub const cglm = @import("Bindings/c.zig").c;
 pub const camera = @import("camera.zig");
 pub const mesh = @import("mesh.zig");
 pub const model = @import("model.zig");
+pub const material = @import("material.zig");
 pub const ui = @import("ui.zig");
 pub const logging = @import("Utils/logging.zig");
 pub const vertex = @import("vertex.zig").Vertex;

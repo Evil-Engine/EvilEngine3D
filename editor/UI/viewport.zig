@@ -1,7 +1,7 @@
 const EE3D = @import("EE3D");
 const gl = EE3D.zopengl.bindings;
 const std = @import("std");
-const ProjectManager = @import("projectmanager.zig").ProjectManager;
+const ProjectManager = @import("../projectmanager.zig").ProjectManager;
 const camera = EE3D.camera;
 const cglm = EE3D.cglm;
 const FrameBuffer = EE3D.FrameBuffer.FrameBuffer;
@@ -67,11 +67,9 @@ pub const Viewport = struct {
                 zgui.pushFont(EE3D.ui.bigFont, 48);
                 const textSize = zgui.calcTextSize(warningText, .{});
 
-                const posX = (width * 0.5 - textSize[0] * 0.5) - 12;
                 const posY = (height * 0.5 - textSize[1] * 0.5) - 12;
 
-                zgui.setCursorPos(.{ posX, posY });
-                zgui.text(warningText, .{});
+                UI.centeredText(warningText, true, true);
 
                 const buttonText = "Project Manager";
                 const buttonTextSize = zgui.calcTextSize(buttonText, .{});

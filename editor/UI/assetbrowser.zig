@@ -40,7 +40,7 @@ pub const AssetBrowser = struct {
         if (std.mem.eql(u8, ext, ".png") or std.mem.eql(u8, ext, ".jpg") or std.mem.eql(u8, ext, ".tif") or std.mem.eql(u8, ext, ".bmp")) return .Image;
         if (std.mem.eql(u8, ext, ".obj") or std.mem.eql(u8, ext, ".fbx") or std.mem.eql(u8, ext, ".b3d") or std.mem.eql(u8, ext, ".gltf")) return .Mesh;
         if (std.mem.eql(u8, ext, ".wav") or std.mem.eql(u8, ext, ".ogg") or std.mem.eql(u8, ext, ".mp3")) return .Audio;
-        if (std.mem.eql(u8, ext, ".zig")) return .Script;
+        if (std.mem.eql(u8, ext, ".lua")) return .Script;
 
         return .GenericFile;
     }

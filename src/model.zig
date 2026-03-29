@@ -2,6 +2,7 @@ const std = @import("std");
 const vertex = @import("vertex.zig");
 const camera = @import("camera.zig");
 const texture = @import("texture.zig");
+const material = @import("material.zig").Material;
 const shader = @import("shader.zig");
 const mesh = @import("mesh.zig");
 const logging = @import("Utils/logging.zig");
@@ -11,7 +12,7 @@ const ArrayList = std.ArrayList;
 const c = @import("Bindings/c.zig").c;
 
 pub const Model = struct {
-    pub fn init(allocator: std.mem.Allocator, textures: ArrayList(texture.Texture), path: []const u8) !Model {
+    pub fn init(allocator: std.mem.Allocator, materials: ArrayList(material), path: []const u8) !Model {
         const c_path = try allocator.dupeZ(u8, path);
         defer allocator.free(c_path);
 
@@ -33,7 +34,7 @@ pub const Model = struct {
             .scene = scene,
             .meshes = meshes,
             .matrices = matrices,
-            .textures = textures,
+            .materials = materials,
         };
 
         try model.traverseNode(scene.*.mRootNode, identity);
@@ -48,7 +49,7 @@ pub const Model = struct {
     }
 
     /// Converts assimp meshes into Evil Engine 3D meshes
-    fn meshFromAssimp(self: *Model, aiMesh: *const c.struct_aiMesh) !mesh.Mesh {
+    fn meshFromAssimp(self: *Model, aiMesh: *const c.struct_aiMesh, index: usize) !mesh.Mesh {
         var vertices = try std.ArrayList(vertex.Vertex).initCapacity(self.allocator, aiMesh.mNumVertices + 1);
 
         // 3 is the min amount of indices and is just a theory, A GAME ENGINE THEORY!!!
@@ -76,7 +77,13 @@ pub const Model = struct {
             }
         }
 
-        return mesh.Mesh.init(vertices, indices, self.textures);
+        var matIndex = aiMesh.mMaterialIndex;
+        if (matIndex >= self.materials.items.len) {
+            try logging.Error("There is more materials on the model than defined in EE3D, MatIndex: {d}, Defined Material Count: {d}", .{ matIndex, self.materials.items.len + 1 });
+            matIndex = 0;
+        }
+
+        return mesh.Mesh.init(vertices, indices, self.materials.items[matIndex], index);
     }
 
     /// PC CRASHER 2000
@@ -99,7 +106,7 @@ pub const Model = struct {
         var i: u32 = 0;
         while (i < node.mNumMeshes) : (i += 1) {
             const assimpMesh = self.scene.mMeshes[node.mMeshes[i]];
-            const m = try self.meshFromAssimp(assimpMesh);
+            const m = try self.meshFromAssimp(assimpMesh, i);
             try self.meshes.append(self.allocator, m);
             try self.matrices.append(self.allocator, worldMatrix);
         }
@@ -120,11 +127,11 @@ pub const Model = struct {
     scene: *const c.struct_aiScene,
     meshes: ArrayList(mesh.Mesh),
     matrices: ArrayList(c.mat4),
-    textures: ArrayList(texture.Texture),
+    materials: ArrayList(material),
     allocator: std.mem.Allocator,
 };
 
-// GUYS I 100% DID NOT GENERATE THIS WITH CHATGPT ;)
+/// GUYS I 100% DID NOT GENERATE THIS WITH CHATGPT ;)
 fn assimpMatrixToCGLM(aiM: c.struct_aiMatrix4x4, out: *c.mat4) void {
     out[0][0] = aiM.a1;
     out[1][0] = aiM.a2;

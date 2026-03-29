@@ -48,6 +48,14 @@ pub const Window = struct {
         }
     }
 
+    pub fn setSizeSizeConstraints(self: *Window, minW: ?u32, minH: ?u32, maxW: ?u32, maxH: ?u32) !void {
+        const minWAdjusted: i32 = @as(i32, @intCast(minW)) orelse -1;
+        const minHAdjusted: i32 = @as(i32, @intCast(minH)) orelse -1;
+        const maxWAdjusted: i32 = @as(i32, @intCast(maxW)) orelse -1;
+        const maxHAdjusted: i32 = @as(i32, @intCast(maxH)) orelse -1;
+        glfw.setWindowSizeLimits(self.rawWindow, minWAdjusted, minHAdjusted, maxWAdjusted, maxHAdjusted);
+    }
+
     pub fn setIcon(self: *Window, imagePath: []const u8) !void {
         var images: [1]glfw.Image = undefined;
         var stbiImg = try zigstbi.load_file(imagePath, 0);

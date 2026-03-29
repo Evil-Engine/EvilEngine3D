@@ -91,6 +91,22 @@ pub const UI = struct {
         glfw.makeContextCurrent(self.Window.rawWindow);
     }
 
+    pub fn centeredText(comptime text: []const u8, xCenter: bool, yCenter: bool) void {
+        const width = zgui.getContentRegionAvail()[0];
+        const height = zgui.getContentRegionAvail()[1];
+        const textSize = zgui.calcTextSize(text, .{});
+        if (xCenter) {
+            const posX = (width * 0.5 - textSize[0] * 0.5) - 12;
+            zgui.setCursorPosX(posX);
+        }
+        if (yCenter) {
+            const posY = (height * 0.5 - textSize[1] * 0.5) - 12;
+            zgui.setCursorPosY(posY);
+        }
+
+        zgui.text(text, .{});
+    }
+
     Window: window.Window,
 };
 

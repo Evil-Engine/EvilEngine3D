@@ -4,17 +4,18 @@ const std = @import("std");
 const camera = EE3D.camera;
 const cglm = EE3D.cglm;
 const UI = EE3D.ui.UI;
-const AssetBrowser = @import("assetbrowser.zig").AssetBrowser;
-const Viewport = @import("viewport.zig").Viewport;
+const AssetBrowser = @import("UI/assetbrowser.zig").AssetBrowser;
+const Viewport = @import("UI/viewport.zig").Viewport;
 const ViewportCamera = @import("viewportcamera.zig").ViewportCamera;
 const ProjectManager = @import("projectmanager.zig").ProjectManager;
-const Hierarchy = @import("hierarchy.zig").Hierarchy;
+const FirstTime = @import("UI/firsttime.zig").FirstTime;
+const Hierarchy = @import("UI/hierarchy.zig").Hierarchy;
 
 pub fn main() !void {
     var app = try EE3D.application.Application.init();
     defer app.destroy();
 
-    var window = try EE3D.window.Window.init(990, 540, "Editor");
+    var window = try EE3D.window.Window.init(990, 540, "EE3D Editor");
     defer window.destroy();
     try app.create_context();
 
@@ -30,23 +31,33 @@ pub fn main() !void {
     var ui = UI.init(window);
     ui.applyDarkTheme();
 
-    const texturePath = try std.fs.path.join(Allocator, &[_][]const u8{ path, "Assets", "Rock051_1K-JPG_Color.jpg" });
-    defer Allocator.free(texturePath);
-
     var Shader = try EE3D.shader.Shader.init(Allocator, "default.vert", "default.frag");
 
-    var Texture = try EE3D.texture.Texture.init(Allocator, texturePath, gl.TEXTURE_2D, gl.TEXTURE1, gl.RGB, gl.UNSIGNED_BYTE);
-    var TextureList = try std.ArrayList(EE3D.texture.Texture).initCapacity(Allocator, 2);
-    defer TextureList.deinit(Allocator);
+    const textureBasePath = try std.fs.path.join(Allocator, &[_][]const u8{ path, "Assets", "SP-8952_Base_AlbedoTransparency.png" });
+    defer Allocator.free(textureBasePath);
+    var BaseTexture = try EE3D.texture.Texture.init(Allocator, textureBasePath, gl.TEXTURE_2D, gl.TEXTURE1, gl.RGB, gl.UNSIGNED_BYTE);
 
-    try TextureList.append(Allocator, Texture);
+    const textureBarrelPath = try std.fs.path.join(Allocator, &[_][]const u8{ path, "Assets", "SP-8952_Barrel_AlbedoTransparency.png" });
+    defer Allocator.free(textureBarrelPath);
+    var BarrelTexture = try EE3D.texture.Texture.init(Allocator, textureBarrelPath, gl.TEXTURE_2D, gl.TEXTURE1, gl.RGB, gl.UNSIGNED_BYTE);
+
+    const textureConductorPath = try std.fs.path.join(Allocator, &[_][]const u8{ path, "Assets", "SP-8952_Conductor_AlbedoTransparency.png" });
+    defer Allocator.free(textureConductorPath);
+    var ConductorTexture = try EE3D.texture.Texture.init(Allocator, textureConductorPath, gl.TEXTURE_2D, gl.TEXTURE1, gl.RGB, gl.UNSIGNED_BYTE);
+
+    var MaterialList = try std.ArrayList(EE3D.material.Material).initCapacity(Allocator, 2);
+    defer MaterialList.deinit(Allocator);
+
+    try MaterialList.append(Allocator, EE3D.material.Material.init(BarrelTexture));
+    try MaterialList.append(Allocator, EE3D.material.Material.init(BaseTexture));
+    try MaterialList.append(Allocator, EE3D.material.Material.init(ConductorTexture));
 
     //var rotation: f32 = 0.0;
     //var prevTime = app.getTime();
 
     var Camera = camera.Camera.init(&window, [_]f32{ 0.0, 0.0, 2.0 });
 
-    var TestModel = try EE3D.model.Model.init(Allocator, TextureList, "SP-8952.fbx");
+    var TestModel = try EE3D.model.Model.init(Allocator, MaterialList, "SP-8952.fbx");
     defer TestModel.deinit();
 
     var assetBrowser = try AssetBrowser.init(Allocator);
@@ -63,6 +74,8 @@ pub fn main() !void {
     var hierarchy = try Hierarchy.init(Allocator);
     defer hierarchy.deinit();
 
+    var firstTime = try FirstTime.init(Allocator);
+    defer firstTime.deinit();
     gl.enable(gl.DEPTH_TEST);
 
     while (!window.shouldClose()) {
@@ -88,7 +101,6 @@ pub fn main() !void {
         try TestModel.draw(&Shader, &Camera);
 
         ui.startRender();
-
         if (EE3D.zgui.beginMainMenuBar()) {
             if (EE3D.zgui.beginMenu("Edit", true)) {
                 if (EE3D.zgui.menuItem("Settings", .{})) {}
@@ -96,19 +108,22 @@ pub fn main() !void {
             }
             EE3D.zgui.endMainMenuBar();
         }
-        try hierarchy.renderUI();
+
+        if (firstTime.isFirstTime) {
+            firstTime.renderUI();
+        } else {
+            try hierarchy.renderUI();
+
+            try viewport.renderUI();
+            try assetBrowser.draw();
+        }
 
         viewport.endRender();
-
-        try viewport.renderUI();
-        try assetBrowser.draw();
-
-        _ = EE3D.zgui.begin("Inspector", .{});
-        EE3D.zgui.end();
-
         ui.endRender();
         window.endRender();
     }
-    Texture.destroy();
+    BaseTexture.destroy();
+    BarrelTexture.destroy();
+    ConductorTexture.destroy();
     Shader.destroy();
 }

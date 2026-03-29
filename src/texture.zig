@@ -6,14 +6,14 @@ const std = @import("std");
 const zigstbi = @import("zigstbi");
 
 pub const Texture = struct {
-    pub fn init(allocator: std.mem.Allocator, image: []const u8, texType: gl.Enum, slot: ?gl.Enum, format: gl.Enum, pixelType: gl.Enum) !Texture {
+    pub fn init(allocator: std.mem.Allocator, imagePath: []const u8, texType: gl.Enum, slot: ?gl.Enum, format: gl.Enum, pixelType: gl.Enum) !Texture {
         var id: gl.Uint = 0;
 
         zigstbi.set_flip_vertically_on_load(true);
 
-        const imageNullTermed = try allocator.dupeZ(u8, image);
+        const imageNullTermed = try allocator.dupeZ(u8, imagePath);
         defer allocator.free(imageNullTermed);
-        var stbImage = try zigstbi.load_file(image, 0);
+        var stbImage = try zigstbi.load_file(imagePath, 0);
         defer stbImage.deinit();
 
         gl.genTextures(1, &id);
