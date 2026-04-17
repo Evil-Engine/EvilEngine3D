@@ -74,7 +74,8 @@ pub fn build(b: *std.Build) !void {
     });
 
     b.installArtifact(exe);
-    b.installDirectory(.{ .install_dir = .bin, .source_dir = b.path("editor/Assets/"), .install_subdir = "Assets" });
+    b.installDirectory(.{ .install_dir = .bin, .source_dir = b.path("editor/Editor_Assets/"), .install_subdir = "Editor_Assets" });
+    b.installDirectory(.{ .install_dir = .bin, .source_dir = b.path("Fonts/"), .install_subdir = "Fonts" });
 
     const run_cmd = b.addRunArtifact(exe);
 

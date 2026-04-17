@@ -19,7 +19,7 @@ pub const Hierarchy = struct {
         const path = try std.fs.selfExeDirPathAlloc(allocator);
         defer allocator.free(path);
 
-        const iconPath = try std.fs.path.join(allocator, &[_][]const u8{ path, "Assets", iconName });
+        const iconPath = try std.fs.path.join(allocator, &[_][]const u8{ path, "Editor_Assets", "UI", iconName });
         defer allocator.free(iconPath);
 
         const icon = try Texture.init(allocator, iconPath, gl.TEXTURE_2D, null, gl.RGBA, gl.UNSIGNED_BYTE);

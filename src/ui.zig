@@ -40,8 +40,8 @@ pub const UI = struct {
     pub fn applyDarkTheme(self: *UI) void {
         _ = self;
         const style = zgui.getStyle();
-        _ = zgui.io.addFontFromFile("M_PLUS_Rounded_1c/MPLUSRounded1c-ExtraBold.ttf", 18);
-        bigFont = zgui.io.addFontFromFile("M_PLUS_Rounded_1c/MPLUSRounded1c-ExtraBold.ttf", 48);
+        _ = zgui.io.addFontFromFile("Fonts/M_PLUS_Rounded_1c/MPLUSRounded1c-ExtraBold.ttf", 18);
+        bigFont = zgui.io.addFontFromFile("Fonts/M_PLUS_Rounded_1c/MPLUSRounded1c-ExtraBold.ttf", 48);
         style.colors[@as(usize, @intFromEnum(zgui.StyleCol.text))] = rgba1(202, 211, 245, 255);
         style.colors[@as(usize, @intFromEnum(zgui.StyleCol.window_bg))] = rgba1(36, 39, 58, 255);
         style.colors[@as(usize, @intFromEnum(zgui.StyleCol.border))] = rgba1(36 + 2, 39 + 2, 58 + 2, 255);

@@ -13,7 +13,7 @@ pub const FirstTime = struct {
         const path = try std.fs.selfExeDirPathAlloc(allocator);
         defer allocator.free(path);
 
-        const bannerPath = try std.fs.path.join(allocator, &[_][]const u8{ path, "Assets", "EvilEngine-Banner-Transparent.png" });
+        const bannerPath = try std.fs.path.join(allocator, &[_][]const u8{ path, "Editor_Assets", "UI", "EvilEngine-Banner-Transparent.png" });
         defer allocator.free(bannerPath);
         const banner = try EE3D.texture.Texture.init(allocator, bannerPath, gl.TEXTURE_2D, null, gl.RGBA, gl.UNSIGNED_BYTE);
         return FirstTime{

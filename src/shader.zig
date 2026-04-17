@@ -20,19 +20,19 @@ pub const Shader = struct {
         const vertexShader: gl.Uint = gl.createShader(gl.VERTEX_SHADER);
         gl.shaderSource(vertexShader, 1, &vertCodePtr, &vertLen);
         gl.compileShader(vertexShader);
-        try checkForCompileErrors(vertexShader, .VERTEX);
+        try checkForCompileErrors(vertexShader, .VERTEX, allocator);
 
         const fragmentShader: gl.Uint = gl.createShader(gl.FRAGMENT_SHADER);
         gl.shaderSource(fragmentShader, 1, &fragCodePtr, &fragLen);
         gl.compileShader(fragmentShader);
-        try checkForCompileErrors(fragmentShader, .FRAGMENT);
+        try checkForCompileErrors(fragmentShader, .FRAGMENT, allocator);
 
         const id = gl.createProgram();
         gl.attachShader(id, vertexShader);
         gl.attachShader(id, fragmentShader);
 
         gl.linkProgram(id);
-        try checkForCompileErrors(id, .PROGRAM);
+        try checkForCompileErrors(id, .PROGRAM, allocator);
 
         gl.deleteShader(vertexShader);
         gl.deleteShader(fragmentShader);
@@ -51,20 +51,39 @@ pub const Shader = struct {
     id: gl.Uint,
 };
 
-fn checkForCompileErrors(shader: gl.Uint, shaderType: ShaderType) !void {
+fn checkForCompileErrors(shader: gl.Uint, shaderType: ShaderType, allocator: std.mem.Allocator) !void {
     var successfulCompile: gl.Int = gl.FALSE;
     var log: [1024]u8 = undefined;
     if (shaderType != .PROGRAM) {
         gl.getShaderiv(shader, gl.COMPILE_STATUS, &successfulCompile);
         if (successfulCompile == gl.FALSE) {
             gl.getShaderInfoLog(shader, 1024, null, &log);
-            try logging.Error("EE3D Shader compile error for type: {d},\n\nInfo:\n{s}\n", .{ @intFromEnum(shaderType), log });
+            const logLen = std.mem.indexOf(u8, &log, &[_]u8{0}) orelse log.len;
+            const logSlice = log[0..logLen];
+
+            const copiedLog: []u8 = try allocator.alloc(u8, logSlice.len);
+            defer allocator.free(copiedLog);
+
+            // this is here because of the double deinit issue thingy
+            std.mem.copyForwards(u8, copiedLog, logSlice);
+
+            try logging.Error("EE3D Shader compile error for type: {s},\n\nInfo:\n{s}\n", .{ @tagName(shaderType), copiedLog });
         }
     } else {
         gl.getProgramiv(shader, gl.LINK_STATUS, &successfulCompile);
         if (successfulCompile == gl.FALSE) {
             gl.getProgramInfoLog(shader, 1024, null, &log);
-            try logging.Error("EE3D Shader link error for type: {d},\n\nInfo:\n{s}\n", .{ @intFromEnum(shaderType), log });
+
+            const logLen = std.mem.indexOf(u8, &log, &[_]u8{0}) orelse log.len;
+            const logSlice = log[0..logLen];
+
+            const copiedLog: []u8 = try allocator.alloc(u8, logSlice.len);
+            defer allocator.free(copiedLog);
+
+            // this is here because of the double deinit issue thingy
+            std.mem.copyForwards(u8, copiedLog, logSlice);
+
+            try logging.Error("EE3D Shader link error for type: {s},\n\nInfo:\n{s}\n", .{ @tagName(shaderType), copiedLog });
         }
     }
 }

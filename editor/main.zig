@@ -33,15 +33,15 @@ pub fn main() !void {
 
     var Shader = try EE3D.shader.Shader.init(Allocator, "default.vert", "default.frag");
 
-    const textureBasePath = try std.fs.path.join(Allocator, &[_][]const u8{ path, "Assets", "SP-8952_Base_AlbedoTransparency.png" });
+    const textureBasePath = try std.fs.path.join(Allocator, &[_][]const u8{ path, "Editor_Assets", "Textures", "SP-8952_Base_AlbedoTransparency.png" });
     defer Allocator.free(textureBasePath);
     var BaseTexture = try EE3D.texture.Texture.init(Allocator, textureBasePath, gl.TEXTURE_2D, gl.TEXTURE1, gl.RGB, gl.UNSIGNED_BYTE);
 
-    const textureBarrelPath = try std.fs.path.join(Allocator, &[_][]const u8{ path, "Assets", "SP-8952_Barrel_AlbedoTransparency.png" });
+    const textureBarrelPath = try std.fs.path.join(Allocator, &[_][]const u8{ path, "Editor_Assets", "Textures", "SP-8952_Barrel_AlbedoTransparency.png" });
     defer Allocator.free(textureBarrelPath);
     var BarrelTexture = try EE3D.texture.Texture.init(Allocator, textureBarrelPath, gl.TEXTURE_2D, gl.TEXTURE1, gl.RGB, gl.UNSIGNED_BYTE);
 
-    const textureConductorPath = try std.fs.path.join(Allocator, &[_][]const u8{ path, "Assets", "SP-8952_Conductor_AlbedoTransparency.png" });
+    const textureConductorPath = try std.fs.path.join(Allocator, &[_][]const u8{ path, "Editor_Assets", "Textures", "SP-8952_Conductor_AlbedoTransparency.png" });
     defer Allocator.free(textureConductorPath);
     var ConductorTexture = try EE3D.texture.Texture.init(Allocator, textureConductorPath, gl.TEXTURE_2D, gl.TEXTURE1, gl.RGB, gl.UNSIGNED_BYTE);
 
