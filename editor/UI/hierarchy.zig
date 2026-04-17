@@ -7,7 +7,10 @@ const zgui = EE3D.zgui;
 
 pub const Hierarchy = struct {
     pub fn init(allocator: std.mem.Allocator) !Hierarchy {
-        const icons = std.AutoHashMap(HierarchyItemType, Texture).init(allocator);
+        var icons = std.AutoHashMap(HierarchyItemType, Texture).init(allocator);
+
+        try registerIcon(allocator, &icons, .Object, "EvilObject.png");
+        try registerIcon(allocator, &icons, .Mesh, "MeshObject.png");
 
         return Hierarchy{
             .allocator = allocator,
@@ -37,8 +40,17 @@ pub const Hierarchy = struct {
     }
 
     pub fn renderUI(self: *Hierarchy) !void {
-        _ = self;
-        if (zgui.begin("Hierarchy", .{ .flags = .{} })) {}
+        if (zgui.begin("Hierarchy", .{ .flags = .{} })) {
+            if (try renderHierarchyItem(self, .{ .name = "SP-8952", .hierarchyitemType = .Object })) {
+                if (try renderHierarchyItem(self, .{ .name = "SP-8952", .hierarchyitemType = .Object })) {
+                    zgui.treePop();
+                }
+                zgui.treePop();
+            }
+            if (try renderHierarchyItem(self, .{ .name = "SP-8952-Mesh", .hierarchyitemType = .Mesh })) {
+                zgui.treePop();
+            }
+        }
         zgui.end();
     }
 
@@ -52,7 +64,7 @@ pub const Hierarchy = struct {
 
         const tex_id: zgui.TextureIdent = @enumFromInt(@as(u64, @intCast(texture.?.id)));
 
-        zgui.image(.{ .tex_id = tex_id, .tex_data = null }, .{ .w = 25, .h = 25 });
+        zgui.image(.{ .tex_id = tex_id, .tex_data = null }, .{ .w = 25, .h = 25, .uv0 = .{ 0.0, 1.0 }, .uv1 = .{ 1.0, 0.0 } });
         zgui.sameLine(.{});
 
         // this might become an issue later, just note to self :P
@@ -71,8 +83,6 @@ pub const HierarchyEntry = struct {
 };
 
 pub const HierarchyItemType = enum {
-    Planet,
-    Galaxy,
-    Star,
+    Object,
     Mesh,
 };
