@@ -4,7 +4,7 @@
 
 * AI is any LLM (Large Language Model) or Image generation tool.
 
-* What does not count as AI is: Autocomplete (Copilot does not count as Autocomplete), Translators (For translating human language).
+* What does not count as AI is: Autocomplete, Translators (For translating human language).
 
 ## 2. General Guidelines
 
