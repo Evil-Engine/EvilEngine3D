@@ -10,7 +10,7 @@
 
 * Image generation tools are NOT allowed, All art must be made by humans.
 
-* LLM's are assistance not a replacement, You're LLM should not replace you, Its called Copilot, Not Pilot.
+* LLM's are assistance not a replacement, Your LLM should not replace you, Its called Copilot, Not Pilot.
 
 * If you use an LLM, You should review all the code it generates.
 
