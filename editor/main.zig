@@ -23,7 +23,7 @@ pub fn main() !void {
     const path = try std.fs.selfExeDirPathAlloc(Allocator);
     defer Allocator.free(path);
 
-    const windowIconPath = try std.fs.path.join(Allocator, &[_][]const u8{ path, "Assets", "EvilEngine-Transparent.png" });
+    const windowIconPath = try std.fs.path.join(Allocator, &[_][]const u8{ path, "Editor_Assets", "UI", "EvilEngine-Transparent.png" });
     defer Allocator.free(windowIconPath);
 
     try window.setIcon(windowIconPath);
