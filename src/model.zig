@@ -83,7 +83,7 @@ pub const Model = struct {
             matIndex = 0;
         }
 
-        return mesh.Mesh.init(vertices, indices, self.materials.items[matIndex], index);
+        return mesh.Mesh.init(self.allocator, vertices, indices, self.materials.items[matIndex], index);
     }
 
     /// PC CRASHER 2000

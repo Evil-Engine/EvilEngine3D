@@ -33,11 +33,6 @@ pub const Window = struct {
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     }
 
-    /// This just exists to make the engine more readable
-    pub fn clear(self: *Window, color: ?[4]f32) void {
-        self.startRender(color);
-    }
-
     pub fn update(self: *Window, updateViewport: bool) void {
         const currentSize = self.rawWindow.getSize();
 

@@ -43,7 +43,7 @@ pub const Texture = struct {
         gl.uniform1i(texUni, unit);
     }
 
-    pub fn bind(self: *Texture) void {
+    pub fn bind(self: *const Texture) void {
         gl.bindTexture(self.texType, self.id);
     }
 

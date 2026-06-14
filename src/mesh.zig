@@ -13,7 +13,7 @@ const gl = zopengl.bindings;
 const ArrayList = std.ArrayList;
 
 pub const Mesh = struct {
-    pub fn init(vertices: ArrayList(vertex.Vertex), indices: ArrayList(gl.Uint), material: Material, meshIndex: usize) Mesh {
+    pub fn init(allocator: std.mem.Allocator, vertices: ArrayList(vertex.Vertex), indices: ArrayList(gl.Uint), material: Material, meshIndex: usize) Mesh {
         var VAO = vao.VAO.init();
 
         VAO.bind();
@@ -38,6 +38,7 @@ pub const Mesh = struct {
             .indices = indices,
             .material = material,
             .meshIndex = meshIndex,
+            .allocator = allocator,
         };
     }
 
@@ -52,8 +53,7 @@ pub const Mesh = struct {
         self.VAO.bind();
         //_ = modelMatrix;
 
-        try self.material.diffuse.texUnit(Shader, "tex0", 0);
-        self.material.diffuse.bind();
+        try Shader.applyMaterial(&self.material, self.allocator);
 
         gl.uniform3f(gl.getUniformLocation(Shader.id, "camPos"), Camera.position[0], Camera.position[1], Camera.position[2]);
         Camera.matrix(Shader, "camMatrix");
@@ -70,4 +70,5 @@ pub const Mesh = struct {
     material: Material,
     VAO: vao.VAO,
     meshIndex: usize,
+    allocator: std.mem.Allocator,
 };

@@ -33,31 +33,28 @@ pub fn main() !void {
 
     var Shader = try EE3D.shader.Shader.init(Allocator, "default.vert", "default.frag");
 
-    const textureBasePath = try std.fs.path.join(Allocator, &[_][]const u8{ path, "Editor_Assets", "Textures", "SP-8952_Base_AlbedoTransparency.png" });
-    defer Allocator.free(textureBasePath);
-    var BaseTexture = try EE3D.texture.Texture.init(Allocator, textureBasePath, gl.TEXTURE_2D, gl.TEXTURE1, gl.RGB, gl.UNSIGNED_BYTE);
+    const textureConcretePath = try std.fs.path.join(Allocator, &[_][]const u8{ path, "Editor_Assets", "Textures", "Concrete047A_1K-JPG_Color.jpg" });
+    defer Allocator.free(textureConcretePath);
+    var concreteTexture = try EE3D.texture.Texture.init(Allocator, textureConcretePath, gl.TEXTURE_2D, gl.TEXTURE1, gl.RGB, gl.UNSIGNED_BYTE);
 
-    const textureBarrelPath = try std.fs.path.join(Allocator, &[_][]const u8{ path, "Editor_Assets", "Textures", "SP-8952_Barrel_AlbedoTransparency.png" });
-    defer Allocator.free(textureBarrelPath);
-    var BarrelTexture = try EE3D.texture.Texture.init(Allocator, textureBarrelPath, gl.TEXTURE_2D, gl.TEXTURE1, gl.RGB, gl.UNSIGNED_BYTE);
-
-    const textureConductorPath = try std.fs.path.join(Allocator, &[_][]const u8{ path, "Editor_Assets", "Textures", "SP-8952_Conductor_AlbedoTransparency.png" });
-    defer Allocator.free(textureConductorPath);
-    var ConductorTexture = try EE3D.texture.Texture.init(Allocator, textureConductorPath, gl.TEXTURE_2D, gl.TEXTURE1, gl.RGB, gl.UNSIGNED_BYTE);
+    const lightmapPath = try std.fs.path.join(Allocator, &[_][]const u8{ path, "Editor_Assets", "Textures", "Lightmap.png" });
+    defer Allocator.free(lightmapPath);
+    var lightmapTexture = try EE3D.texture.Texture.init(Allocator, lightmapPath, gl.TEXTURE_2D, gl.TEXTURE1, gl.RGBA, gl.UNSIGNED_BYTE);
 
     var MaterialList = try std.ArrayList(EE3D.material.Material).initCapacity(Allocator, 2);
     defer MaterialList.deinit(Allocator);
 
-    try MaterialList.append(Allocator, EE3D.material.Material.init(BarrelTexture));
-    try MaterialList.append(Allocator, EE3D.material.Material.init(BaseTexture));
-    try MaterialList.append(Allocator, EE3D.material.Material.init(ConductorTexture));
+    try MaterialList.append(Allocator, EE3D.material.Material.init(Allocator));
+
+    try MaterialList.items[0].set("diffuse", .{ .texture = concreteTexture });
+    try MaterialList.items[0].set("lightmap", .{ .texture = lightmapTexture });
 
     //var rotation: f32 = 0.0;
     //var prevTime = app.getTime();
 
     var Camera = camera.Camera.init(&window, [_]f32{ 0.0, 0.0, 2.0 });
 
-    var TestModel = try EE3D.model.Model.init(Allocator, MaterialList, "SP-8952.fbx");
+    var TestModel = try EE3D.model.Model.init(Allocator, MaterialList, "blender lightmap test.fbx");
     defer TestModel.deinit();
 
     var assetBrowser = try AssetBrowser.init(Allocator);
@@ -80,7 +77,7 @@ pub fn main() !void {
 
     while (!window.shouldClose()) {
         const style = EE3D.zgui.getStyle();
-        window.clear(style.getColor(.window_bg));
+        window.startRender(style.getColor(.window_bg));
         viewport.startRender();
         window.update(false);
         window.startRender(null);
@@ -122,8 +119,7 @@ pub fn main() !void {
         ui.endRender();
         window.endRender();
     }
-    BaseTexture.destroy();
-    BarrelTexture.destroy();
-    ConductorTexture.destroy();
+    concreteTexture.destroy();
+    lightmapTexture.destroy();
     Shader.destroy();
 }

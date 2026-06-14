@@ -1,5 +1,6 @@
 const file = @import("Utils/file.zig");
 const logging = @import("Utils/logging.zig");
+const Material = @import("material.zig").Material;
 const std = @import("std");
 const zopengl = @import("zopengl");
 const gl = zopengl.bindings;
@@ -46,6 +47,23 @@ pub const Shader = struct {
 
     pub fn destroy(self: *Shader) void {
         gl.deleteProgram(self.id);
+    }
+
+    pub fn applyMaterial(self: *Shader, material: *const Material, allocator: std.mem.Allocator) !void {
+        gl.useProgram(self.id);
+        var textureSlot: u32 = 0;
+        var it = material.uniforms.iterator();
+        while (it.next()) |entry| {
+            const name = entry.key_ptr.*;
+            const namez = try allocator.dupeZ(u8, name);
+            defer allocator.free(namez);
+            const location = gl.getUniformLocation(self.id, namez.ptr);
+            if (location == -1) continue;
+
+            const value = entry.value_ptr.*;
+            value.upload(location, textureSlot);
+            if (value == .texture) textureSlot += 1;
+        }
     }
 
     id: gl.Uint,

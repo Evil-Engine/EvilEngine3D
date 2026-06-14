@@ -1,5 +1,6 @@
 const glfw = @import("zglfw");
 const zopengl = @import("zopengl");
+const gl = @import("zopengl").bindings;
 const application = @import("application.zig");
 const std = @import("std");
 const logging = @import("Utils/logging.zig");
@@ -27,6 +28,9 @@ pub const Application = struct {
         };
 
         try logging.Info("Loaded OpenGL profile", .{});
+        gl.enable(gl.CULL_FACE);
+        gl.cullFace(gl.BACK);
+        gl.frontFace(gl.CCW);
     }
 
     pub fn destroy(self: *Application) void {
